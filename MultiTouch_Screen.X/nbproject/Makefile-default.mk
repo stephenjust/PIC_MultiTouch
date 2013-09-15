@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=C:/microchip_solutions_v2013-06-15/Microchip/USB/usb_device.c usb_function_hid.c usb_descriptors.c touch_comm.c main.c ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c PIC18InterruptVectors.asm
+SOURCEFILES_QUOTED_IF_SPACED=C:/microchip_solutions_v2013-06-15/Microchip/USB/usb_device.c usb_function_hid.c usb_descriptors.c touch_comm.c main.c PIC18InterruptVectors.asm i2c.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1961590870/usb_device.o ${OBJECTDIR}/usb_function_hid.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/touch_comm.o ${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/816836298/i2c.o ${OBJECTDIR}/PIC18InterruptVectors.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1961590870/usb_device.o.d ${OBJECTDIR}/usb_function_hid.o.d ${OBJECTDIR}/usb_descriptors.o.d ${OBJECTDIR}/touch_comm.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/_ext/816836298/i2c.o.d ${OBJECTDIR}/PIC18InterruptVectors.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1961590870/usb_device.o ${OBJECTDIR}/usb_function_hid.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/touch_comm.o ${OBJECTDIR}/main.o ${OBJECTDIR}/PIC18InterruptVectors.o ${OBJECTDIR}/i2c.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1961590870/usb_device.o.d ${OBJECTDIR}/usb_function_hid.o.d ${OBJECTDIR}/usb_descriptors.o.d ${OBJECTDIR}/touch_comm.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/PIC18InterruptVectors.o.d ${OBJECTDIR}/i2c.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1961590870/usb_device.o ${OBJECTDIR}/usb_function_hid.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/touch_comm.o ${OBJECTDIR}/main.o ${OBJECTDIR}/_ext/816836298/i2c.o ${OBJECTDIR}/PIC18InterruptVectors.o
+OBJECTFILES=${OBJECTDIR}/_ext/1961590870/usb_device.o ${OBJECTDIR}/usb_function_hid.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/touch_comm.o ${OBJECTDIR}/main.o ${OBJECTDIR}/PIC18InterruptVectors.o ${OBJECTDIR}/i2c.o
 
 # Source Files
-SOURCEFILES=C:/microchip_solutions_v2013-06-15/Microchip/USB/usb_device.c usb_function_hid.c usb_descriptors.c touch_comm.c main.c ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c PIC18InterruptVectors.asm
+SOURCEFILES=C:/microchip_solutions_v2013-06-15/Microchip/USB/usb_device.c usb_function_hid.c usb_descriptors.c touch_comm.c main.c PIC18InterruptVectors.asm i2c.c
 
 
 CFLAGS=
@@ -135,12 +135,12 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${DEP_GEN} -d ${OBJECTDIR}/main.o 
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
-${OBJECTDIR}/_ext/816836298/i2c.o: ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/816836298 
-	@${RM} ${OBJECTDIR}/_ext/816836298/i2c.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"C:/microchip_solutions_v2013-06-15/Microchip/Include" -I"./" -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/_ext/816836298/i2c.o   ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c 
-	@${DEP_GEN} -d ${OBJECTDIR}/_ext/816836298/i2c.o 
-	@${FIXDEPS} "${OBJECTDIR}/_ext/816836298/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
+${OBJECTDIR}/i2c.o: i2c.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/i2c.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"C:/microchip_solutions_v2013-06-15/Microchip/Include" -I"./" -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/i2c.o   i2c.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/i2c.o 
+	@${FIXDEPS} "${OBJECTDIR}/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 else
 ${OBJECTDIR}/_ext/1961590870/usb_device.o: C:/microchip_solutions_v2013-06-15/Microchip/USB/usb_device.c  nbproject/Makefile-${CND_CONF}.mk
@@ -178,12 +178,12 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${DEP_GEN} -d ${OBJECTDIR}/main.o 
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
-${OBJECTDIR}/_ext/816836298/i2c.o: ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/816836298 
-	@${RM} ${OBJECTDIR}/_ext/816836298/i2c.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"C:/microchip_solutions_v2013-06-15/Microchip/Include" -I"./" -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/_ext/816836298/i2c.o   ../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c 
-	@${DEP_GEN} -d ${OBJECTDIR}/_ext/816836298/i2c.o 
-	@${FIXDEPS} "${OBJECTDIR}/_ext/816836298/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
+${OBJECTDIR}/i2c.o: i2c.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/i2c.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"C:/microchip_solutions_v2013-06-15/Microchip/Include" -I"./" -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/i2c.o   i2c.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/i2c.o 
+	@${FIXDEPS} "${OBJECTDIR}/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 endif
 

@@ -39,8 +39,8 @@
       </logicalFolder>
       <itemPath>touch_comm.c</itemPath>
       <itemPath>main.c</itemPath>
-      <itemPath>../../../../microchip_solutions_v2013-06-15/Microchip/USB/i2c.c</itemPath>
       <itemPath>PIC18InterruptVectors.asm</itemPath>
+      <itemPath>i2c.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
