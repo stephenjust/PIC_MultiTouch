@@ -1,0 +1,2118 @@
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;-------------------------------------------------------------------------------
+                      00002 ; FileName:             PIC18InterruptVectors.asm
+                      00003 ; Dependencies: See INCLUDES section
+                      00004 ; Processor:    PIC18 USB Microcontrollers
+                      00005 ; Complier:     Microchip C18 (for PIC18)
+                      00006 ; Company:              Microchip Technology, Inc.
+                      00007 ;
+                      00008 ; Software License Agreement:
+                      00009 ;
+                      00010 ; The software supplied herewith by Microchip Technology Incorporated
+                      00011 ; (the "Company") for its PIC® Microcontroller is intended and
+                      00012 ; supplied to you, the Company's customer, for use solely and
+                      00013 ; exclusively on Microchip PIC Microcontroller products. The
+                      00014 ; software is owned by the Company and/or its supplier, and is
+                      00015 ; protected under applicable copyright laws. All rights are reserved.
+                      00016 ; Any use in violation of the foregoing restrictions may subject the
+                      00017 ; user to criminal sanctions under applicable laws, as well as to
+                      00018 ; civil liability for the breach of the terms and conditions of this
+                      00019 ; license.
+                      00020 ;
+                      00021 ; THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+                      00022 ; WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+                      00023 ; TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+                      00024 ; PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+                      00025 ; IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+                      00026 ; CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+                      00027 ;-------------------------------------------------------------------------------
+                      00028 
+                      00029 #include <p18cxxx.inc>
+                      00001         LIST
+                      00002 ; P18CXXX.INC  Standard Header File, Microchip Technology, Inc.
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC18F14K50 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      01519         LIST
+                      00078   ENDIF
+                      00079   IFDEF __18F2220
+                      00080      INCLUDE <p18F2220.INC>
+                      00081   ENDIF
+                      00082   IFDEF __18F2221
+                      00083      INCLUDE <p18F2221.INC>
+                      00084   ENDIF
+                      00085   IFDEF __18F2320
+                      00086      INCLUDE <p18F2320.INC>
+                      00087   ENDIF
+                      00088   IFDEF __18F2321
+                      00089      INCLUDE <p18F2321.INC>
+                      00090   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00091   IFDEF __18F2331
+                      00092      INCLUDE <p18F2331.INC>
+                      00093   ENDIF
+                      00094   IFDEF __18F23K20
+                      00095      INCLUDE <p18F23K20.INC>
+                      00096   ENDIF
+                      00097   IFDEF __18F23K22
+                      00098      INCLUDE <p18F23K22.INC>
+                      00099   ENDIF
+                      00100   IFDEF __18F2410
+                      00101      INCLUDE <p18F2410.INC>
+                      00102   ENDIF
+                      00103   IFDEF __18F242
+                      00104      INCLUDE <p18F242.INC>
+                      00105   ENDIF
+                      00106   IFDEF __18F2420
+                      00107      INCLUDE <p18F2420.INC>
+                      00108   ENDIF
+                      00109   IFDEF __18F2423
+                      00110      INCLUDE <p18F2423.INC>
+                      00111   ENDIF
+                      00112   IFDEF __18F2431
+                      00113      INCLUDE <p18F2431.INC>
+                      00114   ENDIF
+                      00115   IFDEF __18F2439
+                      00116      INCLUDE <p18F2439.INC>
+                      00117   ENDIF
+                      00118   IFDEF __18F2450
+                      00119      INCLUDE <p18F2450.INC>
+                      00120   ENDIF
+                      00121   IFDEF __18F2455
+                      00122      INCLUDE <p18F2455.INC>
+                      00123   ENDIF
+                      00124   IFDEF __18F2458
+                      00125      INCLUDE <p18F2458.INC>
+                      00126   ENDIF
+                      00127   IFDEF __18F248
+                      00128      INCLUDE <p18F248.INC>
+                      00129   ENDIF
+                      00130   IFDEF __18F2480
+                      00131      INCLUDE <p18F2480.INC>
+                      00132   ENDIF
+                      00133   IFDEF __18F24J10
+                      00134      INCLUDE <p18F24J10.INC>
+                      00135   ENDIF
+                      00136   IFDEF __18F24J11
+                      00137      INCLUDE <p18F24J11.INC>
+                      00138   ENDIF
+                      00139   IFDEF __18F24J50
+                      00140      INCLUDE <p18F24J50.INC>
+                      00141   ENDIF
+                      00142   IFDEF __18F24K20
+                      00143      INCLUDE <p18F24K20.INC>
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00144   ENDIF
+                      00145   IFDEF __18F24K22
+                      00146      INCLUDE <p18F24K22.INC>
+                      00147   ENDIF
+                      00148   IFDEF __18F24K50
+                      00149      INCLUDE <p18F24K50.INC>
+                      00150   ENDIF
+                      00151   IFDEF __18F2510
+                      00152      INCLUDE <p18F2510.INC>
+                      00153   ENDIF
+                      00154   IFDEF __18F2515
+                      00155      INCLUDE <p18F2515.INC>
+                      00156   ENDIF
+                      00157   IFDEF __18F252
+                      00158      INCLUDE <p18F252.INC>
+                      00159   ENDIF
+                      00160   IFDEF __18F2520
+                      00161      INCLUDE <p18F2520.INC>
+                      00162   ENDIF
+                      00163   IFDEF __18F2523
+                      00164      INCLUDE <p18F2523.INC>
+                      00165   ENDIF
+                      00166   IFDEF __18F2525
+                      00167      INCLUDE <p18F2525.INC>
+                      00168   ENDIF
+                      00169   IFDEF __18F2539
+                      00170      INCLUDE <p18F2539.INC>
+                      00171   ENDIF
+                      00172   IFDEF __18F2550
+                      00173      INCLUDE <p18F2550.INC>
+                      00174   ENDIF
+                      00175   IFDEF __18F2553
+                      00176      INCLUDE <p18F2553.INC>
+                      00177   ENDIF
+                      00178   IFDEF __18F258
+                      00179      INCLUDE <p18F258.INC>
+                      00180   ENDIF
+                      00181   IFDEF __18F2580
+                      00182      INCLUDE <p18F2580.INC>
+                      00183   ENDIF
+                      00184   IFDEF __18F2585
+                      00185      INCLUDE <p18F2585.INC>
+                      00186   ENDIF
+                      00187   IFDEF __18F25J10
+                      00188      INCLUDE <p18F25J10.INC>
+                      00189   ENDIF
+                      00190   IFDEF __18F25J11
+                      00191      INCLUDE <p18F25J11.INC>
+                      00192   ENDIF
+                      00193   IFDEF __18F25J50
+                      00194      INCLUDE <p18F25J50.INC>
+                      00195   ENDIF
+                      00196   IFDEF __18F25K20
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00197      INCLUDE <p18F25K20.INC>
+                      00198   ENDIF
+                      00199   IFDEF __18F25K22
+                      00200      INCLUDE <p18F25K22.INC>
+                      00201   ENDIF
+                      00202   IFDEF __18F25K50
+                      00203      INCLUDE <p18F25K50.INC>
+                      00204   ENDIF
+                      00205   IFDEF __18F25K80
+                      00206      INCLUDE <p18F25K80.INC>
+                      00207   ENDIF
+                      00208   IFDEF __18F2610
+                      00209      INCLUDE <p18F2610.INC>
+                      00210   ENDIF
+                      00211   IFDEF __18F2620
+                      00212      INCLUDE <p18F2620.INC>
+                      00213   ENDIF
+                      00214   IFDEF __18F2680
+                      00215      INCLUDE <p18F2680.INC>
+                      00216   ENDIF
+                      00217   IFDEF __18F2682
+                      00218      INCLUDE <p18F2682.INC>
+                      00219   ENDIF
+                      00220   IFDEF __18F2685
+                      00221      INCLUDE <p18F2685.INC>
+                      00222   ENDIF
+                      00223   IFDEF __18F26J11
+                      00224      INCLUDE <p18F26J11.INC>
+                      00225   ENDIF
+                      00226   IFDEF __18F26J13
+                      00227      INCLUDE <p18F26J13.INC>
+                      00228   ENDIF
+                      00229   IFDEF __18F26J50
+                      00230      INCLUDE <p18F26J50.INC>
+                      00231   ENDIF
+                      00232   IFDEF __18F26J53
+                      00233      INCLUDE <p18F26J53.INC>
+                      00234   ENDIF
+                      00235   IFDEF __18F26K20
+                      00236      INCLUDE <p18F26K20.INC>
+                      00237   ENDIF
+                      00238   IFDEF __18F26K22
+                      00239      INCLUDE <p18F26K22.INC>
+                      00240   ENDIF
+                      00241   IFDEF __18F26K80
+                      00242      INCLUDE <p18F26K80.INC>
+                      00243   ENDIF
+                      00244   IFDEF __18F27J13
+                      00245      INCLUDE <p18F27J13.INC>
+                      00246   ENDIF
+                      00247   IFDEF __18F27J53
+                      00248      INCLUDE <p18F27J53.INC>
+                      00249   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00250   IFDEF __18F4220
+                      00251      INCLUDE <p18F4220.INC>
+                      00252   ENDIF
+                      00253   IFDEF __18F4221
+                      00254      INCLUDE <p18F4221.INC>
+                      00255   ENDIF
+                      00256   IFDEF __18F4320
+                      00257      INCLUDE <p18F4320.INC>
+                      00258   ENDIF
+                      00259   IFDEF __18F4321
+                      00260      INCLUDE <p18F4321.INC>
+                      00261   ENDIF
+                      00262   IFDEF __18F4331
+                      00263      INCLUDE <p18F4331.INC>
+                      00264   ENDIF
+                      00265   IFDEF __18F43K20
+                      00266      INCLUDE <p18F43K20.INC>
+                      00267   ENDIF
+                      00268   IFDEF __18F43K22
+                      00269      INCLUDE <p18F43K22.INC>
+                      00270   ENDIF
+                      00271   IFDEF __18F4410
+                      00272      INCLUDE <p18F4410.INC>
+                      00273   ENDIF
+                      00274   IFDEF __18F442
+                      00275      INCLUDE <p18F442.INC>
+                      00276   ENDIF
+                      00277   IFDEF __18F4420
+                      00278      INCLUDE <p18F4420.INC>
+                      00279   ENDIF
+                      00280   IFDEF __18F4423
+                      00281      INCLUDE <p18F4423.INC>
+                      00282   ENDIF
+                      00283   IFDEF __18F4431
+                      00284      INCLUDE <p18F4431.INC>
+                      00285   ENDIF
+                      00286   IFDEF __18F4439
+                      00287      INCLUDE <p18F4439.INC>
+                      00288   ENDIF
+                      00289   IFDEF __18F4450
+                      00290      INCLUDE <p18F4450.INC>
+                      00291   ENDIF
+                      00292   IFDEF __18F4455
+                      00293      INCLUDE <p18F4455.INC>
+                      00294   ENDIF
+                      00295   IFDEF __18F4458
+                      00296      INCLUDE <p18F4458.INC>
+                      00297   ENDIF
+                      00298   IFDEF __18F448
+                      00299      INCLUDE <p18F448.INC>
+                      00300   ENDIF
+                      00301   IFDEF __18F4480
+                      00302      INCLUDE <p18F4480.INC>
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00303   ENDIF
+                      00304   IFDEF __18F44J10
+                      00305      INCLUDE <p18F44J10.INC>
+                      00306   ENDIF
+                      00307   IFDEF __18F44J11
+                      00308      INCLUDE <p18F44J11.INC>
+                      00309   ENDIF
+                      00310   IFDEF __18F44J50
+                      00311      INCLUDE <p18F44J50.INC>
+                      00312   ENDIF
+                      00313   IFDEF __18F44K20
+                      00314      INCLUDE <p18F44K20.INC>
+                      00315   ENDIF
+                      00316   IFDEF __18F44K22
+                      00317      INCLUDE <p18F44K22.INC>
+                      00318   ENDIF
+                      00319   IFDEF __18F4510
+                      00320      INCLUDE <p18F4510.INC>
+                      00321   ENDIF
+                      00322   IFDEF __18F4515
+                      00323      INCLUDE <p18F4515.INC>
+                      00324   ENDIF
+                      00325   IFDEF __18F452
+                      00326      INCLUDE <p18F452.INC>
+                      00327   ENDIF
+                      00328   IFDEF __18F4520
+                      00329      INCLUDE <p18F4520.INC>
+                      00330   ENDIF
+                      00331   IFDEF __18F4523
+                      00332      INCLUDE <p18F4523.INC>
+                      00333   ENDIF
+                      00334   IFDEF __18F4525
+                      00335      INCLUDE <p18F4525.INC>
+                      00336   ENDIF
+                      00337   IFDEF __18F4539
+                      00338      INCLUDE <p18F4539.INC>
+                      00339   ENDIF
+                      00340   IFDEF __18F4550
+                      00341      INCLUDE <p18F4550.INC>
+                      00342   ENDIF
+                      00343   IFDEF __18F4553
+                      00344      INCLUDE <p18F4553.INC>
+                      00345   ENDIF
+                      00346   IFDEF __18F458
+                      00347      INCLUDE <p18F458.INC>
+                      00348   ENDIF
+                      00349   IFDEF __18F4580
+                      00350      INCLUDE <p18F4580.INC>
+                      00351   ENDIF
+                      00352   IFDEF __18F4585
+                      00353      INCLUDE <p18F4585.INC>
+                      00354   ENDIF
+                      00355   IFDEF __18F45J10
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00356      INCLUDE <p18F45J10.INC>
+                      00357   ENDIF
+                      00358   IFDEF __18F45J11
+                      00359      INCLUDE <p18F45J11.INC>
+                      00360   ENDIF
+                      00361   IFDEF __18F45J50
+                      00362      INCLUDE <p18F45J50.INC>
+                      00363   ENDIF
+                      00364   IFDEF __18F45K20
+                      00365      INCLUDE <p18F45K20.INC>
+                      00366   ENDIF
+                      00367   IFDEF __18F45K22
+                      00368      INCLUDE <p18F45K22.INC>
+                      00369   ENDIF
+                      00370   IFDEF __18F45K50
+                      00371      INCLUDE <p18F45K50.INC>
+                      00372   ENDIF
+                      00373   IFDEF __18F45K80
+                      00374      INCLUDE <p18F45K80.INC>
+                      00375   ENDIF
+                      00376   IFDEF __18F4610
+                      00377      INCLUDE <p18F4610.INC>
+                      00378   ENDIF
+                      00379   IFDEF __18F4620
+                      00380      INCLUDE <p18F4620.INC>
+                      00381   ENDIF
+                      00382   IFDEF __18F4680
+                      00383      INCLUDE <p18F4680.INC>
+                      00384   ENDIF
+                      00385   IFDEF __18F4682
+                      00386      INCLUDE <p18F4682.INC>
+                      00387   ENDIF
+                      00388   IFDEF __18F4685
+                      00389      INCLUDE <p18F4685.INC>
+                      00390   ENDIF
+                      00391   IFDEF __18F46J11
+                      00392      INCLUDE <p18F46J11.INC>
+                      00393   ENDIF
+                      00394   IFDEF __18F46J13
+                      00395      INCLUDE <p18F46J13.INC>
+                      00396   ENDIF
+                      00397   IFDEF __18F46J50
+                      00398      INCLUDE <p18F46J50.INC>
+                      00399   ENDIF
+                      00400   IFDEF __18F46J53
+                      00401      INCLUDE <p18F46J53.INC>
+                      00402   ENDIF
+                      00403   IFDEF __18F46K20
+                      00404      INCLUDE <p18F46K20.INC>
+                      00405   ENDIF
+                      00406   IFDEF __18F46K22
+                      00407      INCLUDE <p18F46K22.INC>
+                      00408   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00409   IFDEF __18F46K80
+                      00410      INCLUDE <p18F46K80.INC>
+                      00411   ENDIF
+                      00412   IFDEF __18F47J13
+                      00413      INCLUDE <p18F47J13.INC>
+                      00414   ENDIF
+                      00415   IFDEF __18F47J53
+                      00416      INCLUDE <p18F47J53.INC>
+                      00417   ENDIF
+                      00418   IFDEF __18F6310
+                      00419      INCLUDE <p18F6310.INC>
+                      00420   ENDIF
+                      00421   IFDEF __18F6390
+                      00422      INCLUDE <p18F6390.INC>
+                      00423   ENDIF
+                      00424   IFDEF __18F6393
+                      00425      INCLUDE <p18F6393.INC>
+                      00426   ENDIF
+                      00427   IFDEF __18F63J11
+                      00428      INCLUDE <p18F63J11.INC>
+                      00429   ENDIF
+                      00430   IFDEF __18F63J90
+                      00431      INCLUDE <p18F63J90.INC>
+                      00432   ENDIF
+                      00433   IFDEF __18F6410
+                      00434      INCLUDE <p18F6410.INC>
+                      00435   ENDIF
+                      00436   IFDEF __18F6490
+                      00437      INCLUDE <p18F6490.INC>
+                      00438   ENDIF
+                      00439   IFDEF __18F6493
+                      00440      INCLUDE <p18F6493.INC>
+                      00441   ENDIF
+                      00442   IFDEF __18F64J11
+                      00443      INCLUDE <p18F64J11.INC>
+                      00444   ENDIF
+                      00445   IFDEF __18F64J90
+                      00446      INCLUDE <p18F64J90.INC>
+                      00447   ENDIF
+                      00448   IFDEF __18F6520
+                      00449      INCLUDE <p18F6520.INC>
+                      00450   ENDIF
+                      00451   IFDEF __18F6525
+                      00452      INCLUDE <p18F6525.INC>
+                      00453   ENDIF
+                      00454   IFDEF __18F6527
+                      00455      INCLUDE <p18F6527.INC>
+                      00456   ENDIF
+                      00457   IFDEF __18F6585
+                      00458      INCLUDE <p18F6585.INC>
+                      00459   ENDIF
+                      00460   IFDEF __18F65J10
+                      00461      INCLUDE <p18F65J10.INC>
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00462   ENDIF
+                      00463   IFDEF __18F65J11
+                      00464      INCLUDE <p18F65J11.INC>
+                      00465   ENDIF
+                      00466   IFDEF __18F65J15
+                      00467      INCLUDE <p18F65J15.INC>
+                      00468   ENDIF
+                      00469   IFDEF __18F65J50
+                      00470      INCLUDE <p18F65J50.INC>
+                      00471   ENDIF
+                      00472   IFDEF __18F65J90
+                      00473      INCLUDE <p18F65J90.INC>
+                      00474   ENDIF
+                      00475   IFDEF __18F65K22
+                      00476      INCLUDE <p18F65K22.INC>
+                      00477   ENDIF
+                      00478   IFDEF __18F65K80
+                      00479      INCLUDE <p18F65K80.INC>
+                      00480   ENDIF
+                      00481   IFDEF __18F65K90
+                      00482      INCLUDE <p18F65K90.INC>
+                      00483   ENDIF
+                      00484   IFDEF __18F6620
+                      00485      INCLUDE <p18F6620.INC>
+                      00486   ENDIF
+                      00487   IFDEF __18F6621
+                      00488      INCLUDE <p18F6621.INC>
+                      00489   ENDIF
+                      00490   IFDEF __18F6622
+                      00491      INCLUDE <p18F6622.INC>
+                      00492   ENDIF
+                      00493   IFDEF __18F6627
+                      00494      INCLUDE <p18F6627.INC>
+                      00495   ENDIF
+                      00496   IFDEF __18F6628
+                      00497      INCLUDE <p18F6628.INC>
+                      00498   ENDIF
+                      00499   IFDEF __18F6680
+                      00500      INCLUDE <p18F6680.INC>
+                      00501   ENDIF
+                      00502   IFDEF __18F66J10
+                      00503      INCLUDE <p18F66J10.INC>
+                      00504   ENDIF
+                      00505   IFDEF __18F66J11
+                      00506      INCLUDE <p18F66J11.INC>
+                      00507   ENDIF
+                      00508   IFDEF __18F66J15
+                      00509      INCLUDE <p18F66J15.INC>
+                      00510   ENDIF
+                      00511   IFDEF __18F66J16
+                      00512      INCLUDE <p18F66J16.INC>
+                      00513   ENDIF
+                      00514   IFDEF __18F66J50
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00515      INCLUDE <p18F66J50.INC>
+                      00516   ENDIF
+                      00517   IFDEF __18F66J55
+                      00518      INCLUDE <p18F66J55.INC>
+                      00519   ENDIF
+                      00520   IFDEF __18F66J60
+                      00521      INCLUDE <p18F66J60.INC>
+                      00522   ENDIF
+                      00523   IFDEF __18F66J65
+                      00524      INCLUDE <p18F66J65.INC>
+                      00525   ENDIF
+                      00526   IFDEF __18F66J90
+                      00527      INCLUDE <p18F66J90.INC>
+                      00528   ENDIF
+                      00529   IFDEF __18F66J93
+                      00530      INCLUDE <p18F66J93.INC>
+                      00531   ENDIF
+                      00532   IFDEF __18F66J94
+                      00533      INCLUDE <p18F66J94.INC>
+                      00534   ENDIF
+                      00535   IFDEF __18F66K22
+                      00536      INCLUDE <p18F66K22.INC>
+                      00537   ENDIF
+                      00538   IFDEF __18F66K80
+                      00539      INCLUDE <p18F66K80.INC>
+                      00540   ENDIF
+                      00541   IFDEF __18F66K90
+                      00542      INCLUDE <p18F66K90.INC>
+                      00543   ENDIF
+                      00544   IFDEF __18F6720
+                      00545      INCLUDE <p18F6720.INC>
+                      00546   ENDIF
+                      00547   IFDEF __18F6722
+                      00548      INCLUDE <p18F6722.INC>
+                      00549   ENDIF
+                      00550   IFDEF __18F6723
+                      00551      INCLUDE <p18F6723.INC>
+                      00552   ENDIF
+                      00553   IFDEF __18F67J10
+                      00554      INCLUDE <p18F67J10.INC>
+                      00555   ENDIF
+                      00556   IFDEF __18F67J11
+                      00557      INCLUDE <p18F67J11.INC>
+                      00558   ENDIF
+                      00559   IFDEF __18F67J50
+                      00560      INCLUDE <p18F67J50.INC>
+                      00561   ENDIF
+                      00562   IFDEF __18F67J60
+                      00563      INCLUDE <p18F67J60.INC>
+                      00564   ENDIF
+                      00565   IFDEF __18F67J90
+                      00566      INCLUDE <p18F67J90.INC>
+                      00567   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00568   IFDEF __18F67J93
+                      00569      INCLUDE <p18F67J93.INC>
+                      00570   ENDIF
+                      00571   IFDEF __18F67J94
+                      00572      INCLUDE <p18F67J94.INC>
+                      00573   ENDIF
+                      00574   IFDEF __18F67K22
+                      00575      INCLUDE <p18F67K22.INC>
+                      00576   ENDIF
+                      00577   IFDEF __18F67K90
+                      00578      INCLUDE <p18F67K90.INC>
+                      00579   ENDIF
+                      00580   IFDEF __18F8310
+                      00581      INCLUDE <p18F8310.INC>
+                      00582   ENDIF
+                      00583   IFDEF __18F8390
+                      00584      INCLUDE <p18F8390.INC>
+                      00585   ENDIF
+                      00586   IFDEF __18F8393
+                      00587      INCLUDE <p18F8393.INC>
+                      00588   ENDIF
+                      00589   IFDEF __18F83J11
+                      00590      INCLUDE <p18F83J11.INC>
+                      00591   ENDIF
+                      00592   IFDEF __18F83J90
+                      00593      INCLUDE <p18F83J90.INC>
+                      00594   ENDIF
+                      00595   IFDEF __18F8410
+                      00596      INCLUDE <p18F8410.INC>
+                      00597   ENDIF
+                      00598   IFDEF __18F8490
+                      00599      INCLUDE <p18F8490.INC>
+                      00600   ENDIF
+                      00601   IFDEF __18F8493
+                      00602      INCLUDE <p18F8493.INC>
+                      00603   ENDIF
+                      00604   IFDEF __18F84J11
+                      00605      INCLUDE <p18F84J11.INC>
+                      00606   ENDIF
+                      00607   IFDEF __18F84J90
+                      00608      INCLUDE <p18F84J90.INC>
+                      00609   ENDIF
+                      00610   IFDEF __18F8520
+                      00611      INCLUDE <p18F8520.INC>
+                      00612   ENDIF
+                      00613   IFDEF __18F8525
+                      00614      INCLUDE <p18F8525.INC>
+                      00615   ENDIF
+                      00616   IFDEF __18F8527
+                      00617      INCLUDE <p18F8527.INC>
+                      00618   ENDIF
+                      00619   IFDEF __18F8585
+                      00620      INCLUDE <p18F8585.INC>
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00621   ENDIF
+                      00622   IFDEF __18F85J10
+                      00623      INCLUDE <p18F85J10.INC>
+                      00624   ENDIF
+                      00625   IFDEF __18F85J11
+                      00626      INCLUDE <p18F85J11.INC>
+                      00627   ENDIF
+                      00628   IFDEF __18F85J15
+                      00629      INCLUDE <p18F85J15.INC>
+                      00630   ENDIF
+                      00631   IFDEF __18F85J50
+                      00632      INCLUDE <p18F85J50.INC>
+                      00633   ENDIF
+                      00634   IFDEF __18F85J90
+                      00635      INCLUDE <p18F85J90.INC>
+                      00636   ENDIF
+                      00637   IFDEF __18F65J94
+                      00638      INCLUDE <p18F65J94.INC>
+                      00639   ENDIF
+                      00640   IFDEF __18F66J99
+                      00641      INCLUDE <p18F66J99.INC>
+                      00642   ENDIF
+                      00643   IFDEF __18F85J94
+                      00644      INCLUDE <p18F85J94.INC>
+                      00645   ENDIF
+                      00646   IFDEF __18F86J99
+                      00647      INCLUDE <p18F86J99.INC>
+                      00648   ENDIF
+                      00649   IFDEF __18F95J94
+                      00650      INCLUDE <p18F95J94.INC>
+                      00651   ENDIF
+                      00652   IFDEF __18F96J99
+                      00653      INCLUDE <p18F96J99.INC>
+                      00654   ENDIF
+                      00655   IFDEF __18F85K22
+                      00656      INCLUDE <p18F85K22.INC>
+                      00657   ENDIF
+                      00658   IFDEF __18F85K90
+                      00659      INCLUDE <p18F85K90.INC>
+                      00660   ENDIF
+                      00661   IFDEF __18F8620
+                      00662      INCLUDE <p18F8620.INC>
+                      00663   ENDIF
+                      00664   IFDEF __18F8621
+                      00665      INCLUDE <p18F8621.INC>
+                      00666   ENDIF
+                      00667   IFDEF __18F8622
+                      00668      INCLUDE <p18F8622.INC>
+                      00669   ENDIF
+                      00670   IFDEF __18F8627
+                      00671      INCLUDE <p18F8627.INC>
+                      00672   ENDIF
+                      00673   IFDEF __18F8628
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00674      INCLUDE <p18F8628.INC>
+                      00675   ENDIF
+                      00676   IFDEF __18F8680
+                      00677      INCLUDE <p18F8680.INC>
+                      00678   ENDIF
+                      00679   IFDEF __18F86J10
+                      00680      INCLUDE <p18F86J10.INC>
+                      00681   ENDIF
+                      00682   IFDEF __18F86J11
+                      00683      INCLUDE <p18F86J11.INC>
+                      00684   ENDIF
+                      00685   IFDEF __18F86J15
+                      00686      INCLUDE <p18F86J15.INC>
+                      00687   ENDIF
+                      00688   IFDEF __18F86J16
+                      00689      INCLUDE <p18F86J16.INC>
+                      00690   ENDIF
+                      00691   IFDEF __18F86J50
+                      00692      INCLUDE <p18F86J50.INC>
+                      00693   ENDIF
+                      00694   IFDEF __18F86J55
+                      00695      INCLUDE <p18F86J55.INC>
+                      00696   ENDIF
+                      00697   IFDEF __18F86J60
+                      00698      INCLUDE <p18F86J60.INC>
+                      00699   ENDIF
+                      00700   IFDEF __18F86J65
+                      00701      INCLUDE <p18F86J65.INC>
+                      00702   ENDIF
+                      00703   IFDEF __18F86J72
+                      00704      INCLUDE <p18F86J72.INC>
+                      00705   ENDIF
+                      00706   IFDEF __18F86J90
+                      00707      INCLUDE <p18F86J90.INC>
+                      00708   ENDIF
+                      00709   IFDEF __18F86J93
+                      00710      INCLUDE <p18F86J93.INC>
+                      00711   ENDIF
+                      00712   IFDEF __18F86J94
+                      00713      INCLUDE <p18F86J94.INC>
+                      00714   ENDIF
+                      00715   IFDEF __18F86K22
+                      00716      INCLUDE <p18F86K22.INC>
+                      00717   ENDIF
+                      00718   IFDEF __18F86K90
+                      00719      INCLUDE <p18F86K90.INC>
+                      00720   ENDIF
+                      00721   IFDEF __18F8720
+                      00722      INCLUDE <p18F8720.INC>
+                      00723   ENDIF
+                      00724   IFDEF __18F8722
+                      00725      INCLUDE <p18F8722.INC>
+                      00726   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00727   IFDEF __18F8723
+                      00728      INCLUDE <p18F8723.INC>
+                      00729   ENDIF
+                      00730   IFDEF __18F87J10
+                      00731      INCLUDE <p18F87J10.INC>
+                      00732   ENDIF
+                      00733   IFDEF __18F87J11
+                      00734      INCLUDE <p18F87J11.INC>
+                      00735   ENDIF
+                      00736   IFDEF __18F87J50
+                      00737      INCLUDE <p18F87J50.INC>
+                      00738   ENDIF
+                      00739   IFDEF __18F87J60
+                      00740      INCLUDE <p18F87J60.INC>
+                      00741   ENDIF
+                      00742   IFDEF __18F87J72
+                      00743      INCLUDE <p18F87J72.INC>
+                      00744   ENDIF
+                      00745   IFDEF __18F87J90
+                      00746      INCLUDE <p18F87J90.INC>
+                      00747   ENDIF
+                      00748   IFDEF __18F87J93
+                      00749      INCLUDE <p18F87J93.INC>
+                      00750   ENDIF
+                      00751   IFDEF __18F87J94
+                      00752      INCLUDE <p18F87J94.INC>
+                      00753   ENDIF
+                      00754   IFDEF __18F87K22
+                      00755      INCLUDE <p18F87K22.INC>
+                      00756   ENDIF
+                      00757   IFDEF __18F87K90
+                      00758      INCLUDE <p18F87K90.INC>
+                      00759   ENDIF
+                      00760   IFDEF __18F96J60
+                      00761      INCLUDE <p18F96J60.INC>
+                      00762   ENDIF
+                      00763   IFDEF __18F96J65
+                      00764      INCLUDE <p18F96J65.INC>
+                      00765   ENDIF
+                      00766   IFDEF __18F96J94
+                      00767      INCLUDE <p18F96J94.INC>
+                      00768   ENDIF
+                      00769   IFDEF __18F97J60
+                      00770      INCLUDE <p18F97J60.INC>
+                      00771   ENDIF
+                      00772   IFDEF __18F97J94
+                      00773      INCLUDE <p18F97J94.INC>
+                      00774   ENDIF
+                      00775   IFDEF __18LF13K22
+                      00776      INCLUDE <p18LF13K22.INC>
+                      00777   ENDIF
+                      00778   IFDEF __18LF13K50
+                      00779      INCLUDE <p18LF13K50.INC>
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00780   ENDIF
+                      00781   IFDEF __18LF14K22
+                      00782      INCLUDE <p18LF14K22.INC>
+                      00783   ENDIF
+                      00784   IFDEF __18LF14K50
+                      00785      INCLUDE <p18LF14K50.INC>
+                      00786   ENDIF
+                      00787   IFDEF __18LF23K22
+                      00788      INCLUDE <p18LF23K22.INC>
+                      00789   ENDIF
+                      00790   IFDEF __18LF24J10
+                      00791      INCLUDE <p18LF24J10.INC>
+                      00792   ENDIF
+                      00793   IFDEF __18LF24J11
+                      00794      INCLUDE <p18LF24J11.INC>
+                      00795   ENDIF
+                      00796   IFDEF __18LF24J50
+                      00797      INCLUDE <p18LF24J50.INC>
+                      00798   ENDIF
+                      00799   IFDEF __18LF24K22
+                      00800      INCLUDE <p18LF24K22.INC>
+                      00801   ENDIF
+                      00802   IFDEF __18LF24K50
+                      00803      INCLUDE <p18LF24K50.INC>
+                      00804   ENDIF
+                      00805   IFDEF __18LF25J10
+                      00806      INCLUDE <p18LF25J10.INC>
+                      00807   ENDIF
+                      00808   IFDEF __18LF25J11
+                      00809      INCLUDE <p18LF25J11.INC>
+                      00810   ENDIF
+                      00811   IFDEF __18LF25J50
+                      00812      INCLUDE <p18LF25J50.INC>
+                      00813   ENDIF
+                      00814   IFDEF __18LF25K22
+                      00815      INCLUDE <p18LF25K22.INC>
+                      00816   ENDIF
+                      00817   IFDEF __18LF25K50
+                      00818      INCLUDE <p18LF25K50.INC>
+                      00819   ENDIF
+                      00820   IFDEF __18LF25K80
+                      00821      INCLUDE <p18LF25K80.INC>
+                      00822   ENDIF
+                      00823   IFDEF __18LF26J11
+                      00824      INCLUDE <p18LF26J11.INC>
+                      00825   ENDIF
+                      00826   IFDEF __18LF26J13
+                      00827      INCLUDE <p18LF26J13.INC>
+                      00828   ENDIF
+                      00829   IFDEF __18LF26J50
+                      00830      INCLUDE <p18LF26J50.INC>
+                      00831   ENDIF
+                      00832   IFDEF __18LF26J53
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00833      INCLUDE <p18LF26J53.INC>
+                      00834   ENDIF
+                      00835   IFDEF __18LF26K22
+                      00836      INCLUDE <p18LF26K22.INC>
+                      00837   ENDIF
+                      00838   IFDEF __18LF26K80
+                      00839      INCLUDE <p18LF26K80.INC>
+                      00840   ENDIF
+                      00841   IFDEF __18LF27J13
+                      00842      INCLUDE <p18LF27J13.INC>
+                      00843   ENDIF
+                      00844   IFDEF __18LF27J53
+                      00845      INCLUDE <p18LF27J53.INC>
+                      00846   ENDIF
+                      00847   IFDEF __18LF43K22
+                      00848      INCLUDE <p18LF43K22.INC>
+                      00849   ENDIF
+                      00850   IFDEF __18LF44J10
+                      00851      INCLUDE <p18LF44J10.INC>
+                      00852   ENDIF
+                      00853   IFDEF __18LF44J11
+                      00854      INCLUDE <p18LF44J11.INC>
+                      00855   ENDIF
+                      00856   IFDEF __18LF44J50
+                      00857      INCLUDE <p18LF44J50.INC>
+                      00858   ENDIF
+                      00859   IFDEF __18LF44K22
+                      00860      INCLUDE <p18LF44K22.INC>
+                      00861   ENDIF
+                      00862   IFDEF __18LF45J10
+                      00863      INCLUDE <p18LF45J10.INC>
+                      00864   ENDIF
+                      00865   IFDEF __18LF45J11
+                      00866      INCLUDE <p18LF45J11.INC>
+                      00867   ENDIF
+                      00868   IFDEF __18LF45J50
+                      00869      INCLUDE <p18LF45J50.INC>
+                      00870   ENDIF
+                      00871   IFDEF __18LF45K22
+                      00872      INCLUDE <p18LF45K22.INC>
+                      00873   ENDIF
+                      00874   IFDEF __18LF45K50
+                      00875      INCLUDE <p18LF45K50.INC>
+                      00876   ENDIF
+                      00877   IFDEF __18LF45K80
+                      00878      INCLUDE <p18LF45K80.INC>
+                      00879   ENDIF
+                      00880   IFDEF __18LF46J11
+                      00881      INCLUDE <p18LF46J11.INC>
+                      00882   ENDIF
+                      00883   IFDEF __18LF46J13
+                      00884      INCLUDE <p18LF46J13.INC>
+                      00885   ENDIF
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00886   IFDEF __18LF46J50
+                      00887      INCLUDE <p18LF46J50.INC>
+                      00888   ENDIF
+                      00889   IFDEF __18LF46J53
+                      00890      INCLUDE <p18LF46J53.INC>
+                      00891   ENDIF
+                      00892   IFDEF __18LF46K22
+                      00893      INCLUDE <p18LF46K22.INC>
+                      00894   ENDIF
+                      00895   IFDEF __18LF46K80
+                      00896      INCLUDE <p18LF46K80.INC>
+                      00897   ENDIF
+                      00898   IFDEF __18LF47J13
+                      00899      INCLUDE <p18LF47J13.INC>
+                      00900   ENDIF
+                      00901   IFDEF __18LF47J53
+                      00902      INCLUDE <p18LF47J53.INC>
+                      00903   ENDIF
+                      00904   IFDEF __18LF65K80
+                      00905      INCLUDE <p18LF65K80.INC>
+                      00906   ENDIF
+                      00907   IFDEF __18LF66K80
+                      00908      INCLUDE <p18LF66K80.INC>
+                      00909   ENDIF
+                      00910   IFDEF __MCV20USB
+                      00911      INCLUDE <pMCV20USB.INC>
+                      00912   ENDIF
+                      00913 
+                      00030 
+  0000                00031         extern YourHighPriorityISRCode  ;Function is in main.c.  This is the actual interrupt handler wh
+                            ich checks flags and decides what to do.
+  0000                00032         extern YourLowPriorityISRCode   ;Function is in main.c.  This is the actual interrupt handler wh
+                            ich checks flags and decides what to do.
+                      00033 
+                      00034 
+                      00035 ;-------------------------------------------------------------------------------
+                      00036 ;Important Notes regarding clock switching to 31kHz INTRC during USB Suspend
+                      00037 ;-------------------------------------------------------------------------------
+                      00038 ;During USB suspend, a USB device is required to reduce its total Vbus power
+                      00039 ;consumption to no more than 2.5mA, in order to successfully pass USB compliance
+                      00040 ;tests.  In an application that is bus powered, this 2.5mA or less current 
+                      00041 ;consumption is normally achieved by placing the microcontroller into either sleep
+                      00042 ;mode, or by clock switching to a lower frequency clock source (ex: the 31kHz INTRC).
+                      00043 
+                      00044 ;If the microcontroller firmware wishes to clock switch to a very low frequency
+                      00045 ;clock source, such as 31kHz, then special considerations can become necessary.
+                      00046 
+                      00047 ;During an interrupt event in a C18 based project, the interrupt handler routine
+                      00048 ;will execute some code to perform context saving operations.  The C compiler
+                      00049 ;manages certain registers and resources (ex: such as pointers, intermediate variables
+                      00050 ;used during mathematical operations, etc.), which may need to get saved during the
+                      00051 ;interrupt context save (in addition to the standard registers, such as BSR, 
+                      00052 ;WREG, STATUS).  This C compiler context save can take a relatively long time
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00053 ;to execute.  At a PIC18 microcontroller frequency of 48MHz, a context save
+                      00054 ;operation may take approximately 10us.  At 31kHz, the operation will take much
+                      00055 ;longer (ex: ~15ms).
+                      00056 
+                      00057 ;When a USB host wakes up a USB bus segment from the USB  suspend state, it will 
+                      00058 ;do so by sending non-idle bus signalling to the device (normally a special 
+                      00059 ;"resume" event, which is a driven 'K' state).  This will trigger the 
+                      00060 ;UIR, ACTVIF interrupt flag, allowing the microcontroller firmware to know that 
+                      00061 ;it should wake up from sleep and/or clock switch back to the primary clock 
+                      00062 ;source (back to settings compatible with normal USB operation).
+                      00063 
+                      00064 ;Once the host has sent the special resume signalling, the host is required
+                      00065 ;to wait a minimum of 10ms to allow for a "recovery interval."  This interval 
+                      00066 ;is intended to allow the USB device to finish waking up and prepare itself to 
+                      00067 ;begin receiving new USB commands/traffic.  The USB device is required to be 
+                      00068 ;ready to communicate and respond to traffic at the end of the 10ms interval.
+                      00069 
+                      00070 ;If the microcontroller clock switched to 31kHz at the start of the USB suspend
+                      00071 ;condition, a problem can occur if the interrupt context save operation (caused
+                      00072 ;by the UIR, ACTVIF interrupt event) takes the full ~15ms (at 31kHz).  In this 
+                      00073 ;scenario, the USB device firmware may not be ready in time to receive the 
+                      00074 ;first USB packets sent from the host following the resume recovery interval.
+                      00075 
+                      00076 ;To avoid this potential problem, the microcontroller firmware should quickly 
+                      00077 ;switch back to the primary clock source, after the UIR,ACTVIF interrupt has
+                      00078 ;occurred, but prior to performing the interrupt context save operation.  
+                      00079 ;In this way, the context save operation can take place at a much higher 
+                      00080 ;frequency (ex: the full 48MHz), and therefore can be completed much quicker 
+                      00081 ;than the 10ms recovery interval.  The USB device will therefore be fully
+                      00082 ;ready to begin receiving USB traffic well before the 10ms recovery interval
+                      00083 ;has elapsed.
+                      00084 
+                      00085 #ifdef __18F87J94
+                      00086     #define PIC18F97J94_FAMILY
+                      00087 #endif
+                      00088 #ifdef __18F97J94
+                      00089     #define PIC18F97J94_FAMILY
+                      00090 #endif
+                      00091 
+                      00092 
+                      00093 
+                      00094 #ifdef PIC18F97J94_FAMILY
+                      00095 ;-----------------------------------------------
+                      00096 ;High Priority Interrupt Vector
+                      00097 ;-----------------------------------------------
+                      00098 HiPriVector             code    0x08
+                      00099 HighPriorityIntVector:
+                      00100                 goto    YourHighPriorityISRCode ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00101 
+                      00102 ;-----------------------------------------------
+                      00103 ;Low Priority Interrupt Vector
+                      00104 ;-----------------------------------------------
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00105 LowPriVector    code    0x18
+                      00106 LowPriorityIntVector:
+                      00107                 goto    YourLowPriorityISRCode  ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00108 
+                      00109 ;-------------------------------------------------------------------------------------------------------
+                            -----
+                      00110 ;BELOW SECTION IS ONLY NECESSARY IF THIS PROJECT WILL BE PROGRAMMED WITH THE HID BOOTLOADER.  IF THIS IS
+                      00111 ;NOT REQUIRED, THE BELOW SECTIONS MAY BE COMMENTED OUT.
+                      00112 ;-------------------------------------------------------------------------------------------------------
+                            -----
+                      00113 
+                      00114 ;----------------------------------------------------------------------
+                      00115 ;Remapped High Priority Interrupt Vector (for use with HID Bootloader)
+                      00116 ;----------------------------------------------------------------------
+                      00117 Remapped_HiPriVector            code    0x1008
+                      00118 Remapped_HighPriorityIntVector:
+                      00119                 goto    YourHighPriorityISRCode ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00120 
+                      00121 ;----------------------------------------------------------------------
+                      00122 ;Remapped Low Priority Interrupt Vector (for use with HID Bootloader)
+                      00123 ;----------------------------------------------------------------------
+                      00124 Remapped_LowPriVector   code    0x1018
+                      00125 Remapped_LowPriorityIntVector:
+                      00126                 goto    YourLowPriorityISRCode  ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00127                 
+                      00128 #else  ;#ifdef PIC18F97J94_FAMILY
+                      00129 ;All other PIC18 devices
+                      00130 
+                      00131 
+                      00132 
+                      00133 ;-----------------------------------------------
+                      00134 ;High Priority Interrupt Vector
+                      00135 ;-----------------------------------------------
+                      00136 HiPriVector             code    0x08
+000008                00137 HighPriorityIntVector:
+                      00138                 ;Clock switch to the Primary clock source (ex: OSCCON<SCS1:SCS0> = 00).
+                      00139                 ;Make sure that the below instructions do not change any status bits,
+                      00140                 ;WREG contents, etc.  We have not yet done the interrupt context save
+                      00141                 ;operation, so we need to be careful not to touch any important resources yet.
+000008 90D3           00142                 bcf             OSCCON, SCS0            
+00000A 92D3           00143                 bcf             OSCCON, SCS1                    ;OSCCON<SCS1:SCS0> now = 00 <-- Primary 
+                            Clock Source Selected
+00000C 8CD3           00144                 bsf             OSCCON, IRCF2                   ;Switch to some moderate frequency well 
+                            above 31kHz (if the "primary clock" happens to be the (HF)INTOSC)
+00000E                00145 GotoHighPriorityInterruptHandler:
+00000E EF?? F???      00146                 goto    YourHighPriorityISRCode ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00147 
+                      00148 
+                      00149 
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00150 ;-----------------------------------------------
+                      00151 ;Low Priority Interrupt Vector
+                      00152 ;-----------------------------------------------
+                      00153 LowPriVector    code    0x18
+000018                00154 LowPriorityIntVector:
+                      00155                 ;Clock switch to the Primary clock source (ex: OSCCON<SCS1:SCS0> = 00).
+                      00156                 ;Make sure that the below instructions do not change any status bits,
+                      00157                 ;WREG contents, etc.  We have not yet done the interrupt context save
+                      00158                 ;operation, so we need to be careful not to touch any important resources yet.
+000018 90D3           00159                 bcf             OSCCON, SCS0            
+00001A 92D3           00160                 bcf             OSCCON, SCS1                    ;OSCCON<SCS1:SCS0> now = 00 <-- Primary 
+                            Clock Source Selected
+00001C 8CD3           00161                 bsf             OSCCON, IRCF2                   ;Switch to some moderate frequency well 
+                            above 31kHz (if the "primary clock" happens to be the (HF)INTOSC)
+00001E                00162 GotoLowPriorityInterruptHandler:
+00001E EF?? F???      00163                 goto    YourLowPriorityISRCode  ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00164 
+                      00165 
+                      00166 
+                      00167 
+                      00168 
+                      00169 
+                      00170 
+                      00171 ;-------------------------------------------------------------------------------------------------------
+                            -----
+                      00172 ;BELOW SECTION IS ONLY NECESSARY IF THIS PROJECT WILL BE PROGRAMMED WITH THE HID BOOTLOADER.  IF THIS IS
+                      00173 ;NOT REQUIRED, THE BELOW SECTIONS MAY BE COMMENTED OUT.
+                      00174 ;-------------------------------------------------------------------------------------------------------
+                            -----
+                      00175 
+                      00176 ;----------------------------------------------------------------------
+                      00177 ;Remapped High Priority Interrupt Vector (for use with HID Bootloader)
+                      00178 ;----------------------------------------------------------------------
+                      00179 Remapped_HiPriVector            code    0x1008
+001008                00180 Remapped_HighPriorityIntVector:
+                      00181                 ;Clock switch to the Primary clock source (ex: OSCCON<SCS1:SCS0> = 00).
+                      00182                 ;Make sure that the below instructions do not change any status bits,
+                      00183                 ;WREG contents, etc.  We have not yet done the interrupt context save
+                      00184                 ;operation, so we need to be careful not to touch any important resources yet.
+001008 90D3           00185                 bcf             OSCCON, SCS0            
+00100A 92D3           00186                 bcf             OSCCON, SCS1                    ;OSCCON<SCS1:SCS0> now = 00 <-- Primary 
+                            Clock Source Selected
+00100C 8CD3           00187                 bsf             OSCCON, IRCF2                   ;Switch to some moderate frequency well 
+                            above 31kHz (if the "primary clock" happens to be the (HF)INTOSC)
+00100E                00188 Remapped_GotoHighPriIntHandler:
+00100E EF?? F???      00189                 goto    YourHighPriorityISRCode ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00190 
+                      00191 
+                      00192 
+                      00193 ;----------------------------------------------------------------------
+                      00194 ;Remapped Low Priority Interrupt Vector (for use with HID Bootloader)
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00195 ;----------------------------------------------------------------------
+                      00196 Remapped_LowPriVector   code    0x1018
+001018                00197 Remapped_LowPriorityIntVector:
+                      00198                 ;Clock switch to the Primary clock source (ex: OSCCON<SCS1:SCS0> = 00).
+                      00199                 ;Make sure that the below instructions do not change any status bits,
+                      00200                 ;WREG contents, etc.  We have not yet done the interrupt context save
+                      00201                 ;operation, so we need to be careful not to touch any important resources yet.
+001018 90D3           00202                 bcf             OSCCON, SCS0            
+00101A 92D3           00203                 bcf             OSCCON, SCS1                    ;OSCCON<SCS1:SCS0> now = 00 <-- Primary 
+                            Clock Source Selected
+00101C 8CD3           00204                 bsf             OSCCON, IRCF2                   ;Switch to some moderate frequency well 
+                            above 31kHz (if the "primary clock" happens to be the (HF)INTOSC)
+00101E                00205 Remapped_GotoLowPriIntHandler:
+00101E EF?? F???      00206                 goto    YourLowPriorityISRCode  ;Interrupt context save will be done at the start of thi
+                            s C function.
+                      00207                 
+                      00208 
+                      00209 
+                      00210 
+                      00211 #endif          
+                      00212                 
+                      00213                 end
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+A                                 00000000
+ABDEN                             00000000
+ABDOVF                            00000007
+ACCESS                            00000000
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ACQT0                             00000003
+ACQT1                             00000004
+ACQT2                             00000005
+ACTVIE                            00000002
+ACTVIF                            00000002
+ADCON0                            00000FC2
+ADCON1                            00000FC1
+ADCON2                            00000FC0
+ADCS0                             00000000
+ADCS1                             00000001
+ADCS2                             00000002
+ADDEN                             00000003
+ADDR0                             00000000
+ADDR1                             00000001
+ADDR2                             00000002
+ADDR3                             00000003
+ADDR4                             00000004
+ADDR5                             00000005
+ADDR6                             00000006
+ADEN                              00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADIP                              00000006
+ADON                              00000000
+ADRES                             00000FC3
+ADRESH                            00000FC4
+ADRESL                            00000FC3
+AN10                              00000004
+AN11                              00000005
+AN3                               00000004
+AN4                               00000000
+AN5                               00000001
+AN6                               00000002
+AN7                               00000003
+AN8                               00000006
+AN9                               00000007
+ANS10                             00000002
+ANS11                             00000003
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ANSEL                             00000F7E
+ANSELH                            00000F7F
+BANKED                            00000001
+BAUDCON                           00000FB8
+BAUDCTL                           00000FB8
+BCLIE                             00000003
+BCLIF                             00000003
+BCLIP                             00000003
+BF                                00000000
+BOR                               00000000
+BRG16                             00000003
+BRGH                              00000002
+BSR                               00000FE0
+BTOEE                             00000004
+BTOEF                             00000004
+BTSEE                             00000007
+BTSEF                             00000007
+C                                 00000000
+C12IN1M                           00000001
+C12IN2M                           00000002
+C12IN3M                           00000003
+C12INP                            00000000
+C12OUT                            00000004
+C1CH0                             00000000
+C1CH1                             00000001
+C1HYS                             00000003
+C1IE                              00000006
+C1IF                              00000006
+C1IP                              00000006
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SP                              00000003
+C1SYNC                            00000001
+C2CH0                             00000000
+C2CH1                             00000001
+C2HYS                             00000002
+C2IE                              00000005
+C2IF                              00000005
+C2IP                              00000005
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2RSEL                            00000004
+C2SP                              00000003
+C2SYNC                            00000000
+CCP1                              00000005
+CCP1CON                           00000FBD
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1IP                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCPR1                             00000FBE
+CCPR1H                            00000FBF
+CCPR1L                            00000FBE
+CFGS                              00000006
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CK                                00000007
+CKE                               00000006
+CKP                               00000004
+CKTXP                             00000004
+CLKIN                             00000005
+CLKOUT                            00000004
+CM1CON0                           00000F6D
+CM2CON0                           00000F6B
+CM2CON1                           00000F6C
+CRC16EE                           00000002
+CRC16EF                           00000002
+CRC5EE                            00000001
+CRC5EF                            00000001
+CREN                              00000004
+CSRC                              00000007
+CVREF                             00000002
+D                                 00000005
+D1EN                              00000007
+D1LPS                             00000006
+D1NSS                             00000000
+D1PSS0                            00000002
+D1PSS1                            00000003
+DAC1OE                            00000005
+DAC1R0                            00000000
+DAC1R1                            00000001
+DAC1R2                            00000002
+DAC1R3                            00000003
+DAC1R4                            00000004
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DDRA                              TRISA
+DDRB                              TRISB
+DDRC                              TRISC
+DDRD                              TRISD
+DDRE                              TRISE
+DFN8EE                            00000003
+DFN8EF                            00000003
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+DIR                               00000002
+DONE                              00000001
+DTRXP                             00000005
+D_A                               00000005
+D_NOT_A                           00000005
+ECCP1AS                           00000FB6
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             00000FA9
+EEADR0                            00000000
+EEADR1                            00000001
+EEADR2                            00000002
+EEADR3                            00000003
+EEADR4                            00000004
+EEADR5                            00000005
+EEADR6                            00000006
+EEADR7                            00000007
+EECON1                            00000FA6
+EECON2                            00000FA7
+EEDATA                            00000FA8
+EEIE                              00000004
+EEIF                              00000004
+EEIP                              00000004
+EEPGD                             00000007
+ENDP0                             00000003
+ENDP1                             00000004
+ENDP2                             00000005
+ENDP3                             00000006
+EPCONDIS                          00000003
+EPHSHK                            00000004
+EPINEN                            00000001
+EPOUTEN                           00000002
+EPSTALL                           00000000
+FAST                              00000001
+FERR                              00000002
+FREE                              00000004
+FRM0                              00000000
+FRM1                              00000001
+FRM10                             00000002
+FRM2                              00000002
+FRM3                              00000003
+FRM4                              00000004
+FRM5                              00000005
+FRM6                              00000006
+FRM7                              00000007
+FRM8                              00000000
+FRM9                              00000001
+FSEN                              00000002
+FSR0                              00000000
+FSR0H                             00000FEA
+FSR0L                             00000FE9
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FSR1                              00000001
+FSR1H                             00000FE2
+FSR1L                             00000FE1
+FSR2                              00000002
+FSR2H                             00000FDA
+FSR2L                             00000FD9
+FVR1EN                            00000007
+FVR1S0                            00000004
+FVR1S1                            00000005
+FVR1ST                            00000006
+GCEN                              00000007
+GIE                               00000007
+GIEH                              00000007
+GIEL                              00000006
+GIE_GIEH                          00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+GotoHighPriorityInterruptHandler  0000000E
+GotoLowPriorityInterruptHandler   0000001E
+HFIOFL                            00000001
+HighPriorityIntVector             00000008
+IDLEIE                            00000004
+IDLEIF                            00000004
+IDLEN                             00000007
+INDF0                             00000FEF
+INDF1                             00000FE7
+INDF2                             00000FDF
+INT0                              00000000
+INT0E                             00000004
+INT0F                             00000001
+INT0IE                            00000004
+INT0IF                            00000001
+INT1                              00000001
+INT1E                             00000003
+INT1F                             00000000
+INT1IE                            00000003
+INT1IF                            00000000
+INT1IP                            00000006
+INT1P                             00000006
+INT2                              00000002
+INT2E                             00000004
+INT2F                             00000001
+INT2IE                            00000004
+INT2IF                            00000001
+INT2IP                            00000007
+INT2P                             00000007
+INTCON                            00000FF2
+INTCON2                           00000FF1
+INTCON3                           00000FF0
+INTEDG0                           00000006
+INTEDG1                           00000005
+INTEDG2                           00000004
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INTSRC                            00000007
+IOCA                              00000F79
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IOCB                              00000F7A
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IOFS                              00000002
+IPEN                              00000007
+IPR1                              00000F9F
+IPR2                              00000FA2
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+LATA                              00000F89
+LATA4                             00000004
+LATA5                             00000005
+LATB                              00000F8A
+LATB4                             00000004
+LATB5                             00000005
+LATB6                             00000006
+LATB7                             00000007
+LATC                              00000F8B
+LATC0                             00000000
+LATC1                             00000001
+LATC2                             00000002
+LATC3                             00000003
+LATC4                             00000004
+LATC5                             00000005
+LATC6                             00000006
+LATC7                             00000007
+LFIOFS                            00000000
+LowPriorityIntVector              00000018
+MC1OUT                            00000007
+MC2OUT                            00000006
+MSK0                              00000000
+MSK1                              00000001
+MSK2                              00000002
+MSK3                              00000003
+MSK4                              00000004
+MSK5                              00000005
+MSK6                              00000006
+MSK7                              00000007
+N                                 00000004
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_PD                            00000002
+NOT_POR                           00000001
+NOT_RABPU                         00000007
+NOT_RI                            00000004
+NOT_SS                            00000006
+NOT_T1SYNC                        00000002
+NOT_T3SYNC                        00000002
+NOT_TO                            00000003
+NOT_W                             00000002
+NOT_WRITE                         00000002
+NVCFG0                            00000000
+NVCFG1                            00000001
+OERR                              00000001
+OSC1                              00000005
+OSC2                              00000004
+OSCCON                            00000FD3
+OSCCON2                           00000FD2
+OSCFIE                            00000007
+OSCFIF                            00000007
+OSCFIP                            00000007
+OSCTUNE                           00000F9B
+OSTS                              00000003
+OV                                00000003
+P                                 00000004
+P1A                               00000005
+P1B                               00000004
+P1C                               00000003
+P1D                               00000002
+P1M0                              00000006
+P1M1                              00000007
+PC                                00000FF9
+PCL                               00000FF9
+PCLATH                            00000FFA
+PCLATU                            00000FFB
+PD                                00000002
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEIE_GIEL                         00000006
+PEN                               00000002
+PGM                               00000003
+PIDEE                             00000000
+PIDEF                             00000000
+PIE1                              00000F9D
+PIE2                              00000FA0
+PIR1                              00000F9E
+PIR2                              00000FA1
+PKTDIS                            00000004
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PLUSW0                            00000FEB
+PLUSW1                            00000FE3
+PLUSW2                            00000FDB
+POR                               00000001
+PORTA                             00000F80
+PORTB                             00000F81
+PORTC                             00000F82
+POSTDEC0                          00000FED
+POSTDEC1                          00000FE5
+POSTDEC2                          00000FDD
+POSTINC0                          00000FEE
+POSTINC1                          00000FE6
+POSTINC2                          00000FDE
+PPB0                              00000000
+PPB1                              00000001
+PPBI                              00000001
+PPBRST                            00000006
+PR2                               00000FCB
+PREINC0                           00000FEC
+PREINC1                           00000FE4
+PREINC2                           00000FDC
+PRI_SD                            00000002
+PROD                              00000FF3
+PRODH                             00000FF4
+PRODL                             00000FF3
+PRSEN                             00000007
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PSTRCON                           00000FB9
+PVCFG0                            00000002
+PVCFG1                            00000003
+PWM1CON                           00000FB7
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RABIE                             00000003
+RABIF                             00000000
+RABIP                             00000000
+RABPU                             00000007
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 30
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCIP                              00000005
+RCON                              00000FD0
+RCREG                             00000FAE
+RCSTA                             00000FAB
+RD                                00000000
+RD16                              00000007
+REFCON0                           00000FBA
+REFCON1                           00000FBB
+REFCON2                           00000FBC
+RESUME                            00000002
+RI                                00000004
+RSEN                              00000001
+RX                                00000005
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+Remapped_GotoHighPriIntHandler    0000100E
+Remapped_GotoLowPriIntHandler     0000101E
+Remapped_HighPriorityIntVector    00001008
+Remapped_LowPriorityIntVector     00001018
+S                                 00000003
+SBOREN                            00000006
+SCK                               00000006
+SCKP                              00000004
+SCL                               00000006
+SCS0                              00000000
+SCS1                              00000001
+SDA                               00000004
+SDI                               00000004
+SDO                               00000007
+SE0                               00000005
+SEN                               00000000
+SENDB                             00000003
+SLRA                              00000000
+SLRB                              00000001
+SLRC                              00000002
+SLRCON                            00000F76
+SMP                               00000007
+SOFIE                             00000006
+SOFIF                             00000006
+SP0                               00000000
+SP1                               00000001
+SP2                               00000002
+SP3                               00000003
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 31
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SP4                               00000004
+SPBRG                             00000FAF
+SPBRGH                            00000FB0
+SPEN                              00000007
+SPLLEN                            00000006
+SRCLK0                            00000004
+SRCLK1                            00000005
+SRCLK2                            00000006
+SRCON0                            00000F68
+SRCON1                            00000F69
+SREN                              00000005
+SRLEN                             00000007
+SRNQEN                            00000002
+SRPR                              00000000
+SRPS                              00000001
+SRQ                               00000004
+SRQEN                             00000003
+SRRC1E                            00000000
+SRRC2E                            00000001
+SRRCKE                            00000002
+SRRPE                             00000003
+SRSC1E                            00000004
+SRSC2E                            00000005
+SRSCKE                            00000006
+SRSPE                             00000007
+SS                                00000006
+SSPADD                            00000FC8
+SSPBUF                            00000FC9
+SSPCON1                           00000FC6
+SSPCON2                           00000FC5
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPIP                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000F6F
+SSPOV                             00000006
+SSPSTAT                           00000FC7
+STALLIE                           00000005
+STALLIF                           00000005
+STATUS                            00000FD8
+STKFUL                            00000007
+STKOVF                            00000007
+STKPTR                            00000FFC
+STKUNF                            00000006
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 32
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SUSPND                            00000001
+SWDTE                             00000000
+SWDTEN                            00000000
+SYNC                              00000004
+T08BIT                            00000006
+T0CKI                             00000005
+T0CON                             00000FD5
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0PS0                             00000000
+T0PS1                             00000001
+T0PS2                             00000002
+T0SE                              00000004
+T13CKI                            00000006
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000FCD
+T1OSCEN                           00000003
+T1OSCI                            00000006
+T1OSCO                            00000007
+T1RUN                             00000006
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000FCA
+T2OUTPS0                          00000003
+T2OUTPS1                          00000004
+T2OUTPS2                          00000005
+T2OUTPS3                          00000006
+T3CCP1                            00000003
+T3CKPS0                           00000004
+T3CKPS1                           00000005
+T3CON                             00000FB1
+T3SYNC                            00000002
+TABLAT                            00000FF5
+TBLPTR                            00000FF6
+TBLPTRH                           00000FF7
+TBLPTRL                           00000FF6
+TBLPTRU                           00000FF8
+TMR0                              00000FD6
+TMR0H                             00000FD7
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR0IP                            00000002
+TMR0L                             00000FD6
+TMR0ON                            00000007
+TMR1                              00000FCE
+TMR1CS                            00000001
+TMR1H                             00000FCF
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1IP                            00000000
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 33
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR1L                             00000FCE
+TMR1ON                            00000000
+TMR2                              00000FCC
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2IP                            00000001
+TMR2ON                            00000002
+TMR3                              00000FB2
+TMR3CS                            00000001
+TMR3H                             00000FB3
+TMR3IE                            00000001
+TMR3IF                            00000001
+TMR3IP                            00000001
+TMR3L                             00000FB2
+TMR3ON                            00000000
+TO                                00000003
+TOS                               00000FFD
+TOSH                              00000FFE
+TOSL                              00000FFD
+TOSU                              00000FFF
+TRISA                             00000F92
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000F93
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000F94
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TRNIE                             00000003
+TRNIF                             00000003
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TUN5                              00000005
+TX                                00000007
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXIP                              00000004
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 34
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TXREG                             00000FAD
+TXSTA                             00000FAC
+UA                                00000001
+UADDR                             00000F5C
+UCFG                              00000F61
+UCON                              00000F64
+UEIE                              00000F5B
+UEIR                              00000F5F
+UEP0                              00000F53
+UEP1                              00000F54
+UEP2                              00000F55
+UEP3                              00000F56
+UEP4                              00000F57
+UEP5                              00000F58
+UEP6                              00000F59
+UEP7                              00000F5A
+UERRIE                            00000001
+UERRIF                            00000001
+UFRMH                             00000F5E
+UFRML                             00000F5D
+UIE                               00000F60
+UIR                               00000F62
+UPUEN                             00000004
+URSTIE                            00000000
+URSTIF                            00000000
+USBEN                             00000003
+USBIE                             00000002
+USBIF                             00000002
+USBIP                             00000002
+USTAT                             00000F63
+UTEYE                             00000007
+VREFCON0                          00000FBA
+VREFCON1                          00000FBB
+VREFCON2                          00000FBC
+VREFM                             00000001
+VREFP                             00000000
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000FD1
+WPUA                              00000F77
+WPUA3                             00000003
+WPUA4                             00000004
+WPUA5                             00000005
+WPUB                              00000F78
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+WPUB7                             00000007
+WR                                00000001
+WREG                              00000FE8
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 35
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+YourHighPriorityISRCode           00000000
+YourLowPriorityISRCode            00000000
+Z                                 00000002
+_BBSIZ_OFF_4L                     000000F7
+_BBSIZ_ON_4L                      000000FF
+_BOREN_NOSLP_2L                   000000FD
+_BOREN_OFF_2L                     000000F9
+_BOREN_ON_2L                      000000FB
+_BOREN_SBORDIS_2L                 000000FF
+_BORV_19_2L                       000000FF
+_BORV_22_2L                       000000F7
+_BORV_27_2L                       000000EF
+_BORV_30_2L                       000000E7
+_CONFIG1H                         00300001
+_CONFIG1L                         00300000
+_CONFIG2H                         00300003
+_CONFIG2L                         00300002
+_CONFIG3H                         00300005
+_CONFIG4L                         00300006
+_CONFIG5H                         00300009
+_CONFIG5L                         00300008
+_CONFIG6H                         0030000B
+_CONFIG6L                         0030000A
+_CONFIG7H                         0030000D
+_CONFIG7L                         0030000C
+_CP0_OFF_5L                       000000FF
+_CP0_ON_5L                        000000FE
+_CP1_OFF_5L                       000000FF
+_CP1_ON_5L                        000000FD
+_CPB_OFF_5H                       000000FF
+_CPB_ON_5H                        000000BF
+_CPD_OFF_5H                       000000FF
+_CPD_ON_5H                        0000007F
+_CPUDIV_CLKDIV2_1L                000000EF
+_CPUDIV_CLKDIV3_1L                000000F7
+_CPUDIV_CLKDIV4_1L                000000FF
+_CPUDIV_NOCLKDIV_1L               000000E7
+_DEBUG_OFF_4L                     000000FF
+_DEBUG_ON_4L                      0000007F
+_DEVID1                           003FFFFE
+_DEVID2                           003FFFFF
+_EBTR0_OFF_7L                     000000FF
+_EBTR0_ON_7L                      000000FE
+_EBTR1_OFF_7L                     000000FF
+_EBTR1_ON_7L                      000000FD
+_EBTRB_OFF_7H                     000000FF
+_EBTRB_ON_7H                      000000BF
+_FCMEN_OFF_1H                     000000BF
+_FCMEN_ON_1H                      000000FF
+_FOSC_ECCLKOUTH_1H                000000F4
+_FOSC_ECCLKOUTL_1H                000000FC
+_FOSC_ECCLKOUTM_1H                000000FA
+_FOSC_ECH_1H                      000000F5
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 36
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_FOSC_ECL_1H                      000000FD
+_FOSC_ECM_1H                      000000FB
+_FOSC_ERCCLKOUT_1H                000000F3
+_FOSC_ERC_1H                      000000F7
+_FOSC_HS_1H                       000000F2
+_FOSC_IRCCLKOUT_1H                000000F9
+_FOSC_IRC_1H                      000000F8
+_FOSC_LP_1H                       000000F0
+_FOSC_XT_1H                       000000F1
+_HFOFST_OFF_3H                    000000F7
+_HFOFST_ON_3H                     000000FF
+_IDLOC0                           00200000
+_IDLOC1                           00200001
+_IDLOC2                           00200002
+_IDLOC3                           00200003
+_IDLOC4                           00200004
+_IDLOC5                           00200005
+_IDLOC6                           00200006
+_IDLOC7                           00200007
+_IESO_OFF_1H                      0000007F
+_IESO_ON_1H                       000000FF
+_LVP_OFF_4L                       000000FB
+_LVP_ON_4L                        000000FF
+_MCLRE_OFF_3H                     0000007F
+_MCLRE_ON_3H                      000000FF
+_PCLKEN_OFF_1H                    000000DF
+_PCLKEN_ON_1H                     000000FF
+_PLLEN_OFF_1H                     000000EF
+_PLLEN_ON_1H                      000000FF
+_PWRTEN_OFF_2L                    000000FF
+_PWRTEN_ON_2L                     000000FE
+_STVREN_OFF_4L                    000000FE
+_STVREN_ON_4L                     000000FF
+_USBDIV_OFF_1L                    000000DF
+_USBDIV_ON_1L                     000000FF
+_WDTEN_OFF_2H                     000000FE
+_WDTEN_ON_2H                      000000FF
+_WDTPS_1024_2H                    000000F5
+_WDTPS_128_2H                     000000EF
+_WDTPS_16384_2H                   000000FD
+_WDTPS_16_2H                      000000E9
+_WDTPS_1_2H                       000000E1
+_WDTPS_2048_2H                    000000F7
+_WDTPS_256_2H                     000000F1
+_WDTPS_2_2H                       000000E3
+_WDTPS_32768_2H                   000000FF
+_WDTPS_32_2H                      000000EB
+_WDTPS_4096_2H                    000000F9
+_WDTPS_4_2H                       000000E5
+_WDTPS_512_2H                     000000F3
+_WDTPS_64_2H                      000000ED
+_WDTPS_8192_2H                    000000FB
+_WDTPS_8_2H                       000000E7
+MPASM  5.50         PIC18INTERRUPTVECTORS.ASM   9-3-2013  21:33:24         PAGE 37
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WRT0_OFF_6L                      000000FF
+_WRT0_ON_6L                       000000FE
+_WRT1_OFF_6L                      000000FF
+_WRT1_ON_6L                       000000FD
+_WRTB_OFF_6H                      000000FF
+_WRTB_ON_6H                       000000BF
+_WRTC_OFF_6H                      000000FF
+_WRTC_ON_6H                       000000DF
+_WRTD_OFF_6H                      000000FF
+_WRTD_ON_6H                       0000007F
+_XINST_OFF_4L                     000000BF
+_XINST_ON_4L                      000000FF
+__18F14K50                        00000001
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

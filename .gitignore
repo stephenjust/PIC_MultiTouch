@@ -4,6 +4,7 @@
 # Libraries
 *.lib
 *.a
+*.d
 
 # Shared objects (inc. Windows DLLs)
 *.dll
@@ -15,3 +16,5 @@
 *.exe
 *.out
 *.app
+
+dist/*
