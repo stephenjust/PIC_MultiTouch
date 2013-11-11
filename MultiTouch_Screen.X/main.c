@@ -94,14 +94,12 @@ BYTE ReportsSent;
 WORD SOFCount;			//Can get updated in interrupt context if using USB interrupts instead of polling
 WORD SOFCountIntSafe;	//Shadow holding variable for the SOFCounter.  This number will not get updated in the interrupt context.
 WORD SOFCountIntSafeOld;
-USB_VOLATILE USB_HANDLE lastTransmission = 0;
+USB_HANDLE lastTransmission = 0;
 
 BOOL HIDApplicationModeChanging;
 BYTE DeviceIdentifier;
 BYTE DeviceMode;
 //DeviceMode variable values.  See also the usb_config.h "DEFAULT_DEVICE_MODE" definition.
-#define MOUSE_MODE 			0x00
-#define SINGLE_TOUCH_DIGITIZER_MODE	0x01
 #define MULTI_TOUCH_DIGITIZER_MODE	0x02
 
 #if !defined(pBDTEntryIn)
@@ -120,8 +118,10 @@ void TouchInterrupt(void);
 
 #define LED1On() LATBbits.LATB7 = 1
 #define LED1Off() LATBbits.LATB7 = 0
-#define LED2On() LATCbits.LATC7 = 1
-#define LED2Off() LATCbits.LATC7 = 0
+#define LED2On() LATCbits.LATC6 = 1
+#define LED2Off() LATCbits.LATC6 = 0
+#define LED3On() LATCbits.LATC3 = 1
+#define LED3Off() LATCbits.LATC3 = 0
 
 /** VECTOR REMAPPING ***********************************************/
 #if defined(__18CXX)
@@ -171,11 +171,13 @@ void TouchInterrupt(void);
 	//during USB suspend.
 	//--------------------------------------------------------------------	
 #pragma code
+unsigned int ti_running = 0;
 
 	//These are your actual interrupt handling routines.
 	#pragma interrupt YourHighPriorityISRCode
 	void YourHighPriorityISRCode()
 	{
+            // USB device interrupt
             LED1On();
             #if defined(USB_INTERRUPT)
                 USBDeviceTasks();
@@ -190,20 +192,8 @@ void TouchInterrupt(void);
 	#pragma interruptlow YourLowPriorityISRCode
 	void YourLowPriorityISRCode()
 	{
-            //Check which interrupt flag caused the interrupt.
-            //Service the interrupt
-            //Clear the interrupt flag
-            //Etc.
-            if (INTCON3bits.INT1IF) {
-                INTCON3bits.INT1IE = 0;
-                INTCON3bits.INT1IF = 0;
-                LED2On();
-                // Touch screen interrupt!
-                TouchInterrupt();
-                LED2Off();
-                INTCON3bits.INT1IE = 1;
-            }
-	
+            // Touch panel interrupt
+            TouchInterrupt();
 	}	//This return will be a "retfie", since this is in a #pragma interruptlow section 
 
 
@@ -241,29 +231,13 @@ void main(void)
 
     while(1)
     {
-        #if defined(USB_POLLING)
-		// Check bus status and service USB interrupts.
-        USBDeviceTasks(); // Interrupt or polling method.  If using polling, must call
-        				  // this function periodically.  This function will take care
-        				  // of processing and responding to SETUP transactions 
-        				  // (such as during the enumeration process when you first
-        				  // plug in).  USB hosts require that USB devices should accept
-        				  // and process SETUP packets in a timely fashion.  Therefore,
-        				  // when using polling, this function should be called 
-        				  // regularly (such as once every 1.8ms or faster** [see 
-        				  // inline code comments in usb_device.c for explanation when
-        				  // "or faster" applies])  In most cases, the USBDeviceTasks() 
-        				  // function does not take very long to execute (ex: <100 
-        				  // instruction cycles) before it returns.
-        #endif
-    				  
-
 	// Code happens in interrupts
     }//end while
 }//end main
 
 void InitLEDs(void) {
-    LATCbits.LATC7 = 0; TRISCbits.RC7 = 0;
+    LATCbits.LATC3 = 0; TRISCbits.RC3 = 0;
+    LATCbits.LATC6 = 0; TRISCbits.RC6 = 0;
     LATBbits.LATB7 = 0; TRISBbits.RB7 = 0;
 }
 
@@ -291,42 +265,6 @@ static void InitializeSystem(void)
 {
     ADCON1 |= 0x0F;                 // Default all pins to digital
     InitLEDs();
-//	The USB specifications require that USB peripheral devices must never source
-//	current onto the Vbus pin.  Additionally, USB peripherals should not source
-//	current on D+ or D- when the host/hub is not actively powering the Vbus line.
-//	When designing a self powered (as opposed to bus powered) USB peripheral
-//	device, the firmware should make sure not to turn on the USB module and D+
-//	or D- pull up resistor unless Vbus is actively powered.  Therefore, the
-//	firmware needs some means to detect when Vbus is being powered by the host.
-//	A 5V tolerant I/O pin can be connected to Vbus (through a resistor), and
-// 	can be used to detect when Vbus is high (host actively powering), or low
-//	(host is shut down or otherwise not supplying power).  The USB firmware
-// 	can then periodically poll this I/O pin to know when it is okay to turn on
-//	the USB module/D+/D- pull up resistor.  When designing a purely bus powered
-//	peripheral device, it is not possible to source current on D+ or D- when the
-//	host is not actively providing power on Vbus. Therefore, implementing this
-//	bus sense feature is optional.  This firmware can be made to use this bus
-//	sense feature by making sure "USE_USB_BUS_SENSE_IO" has been defined in the
-//	HardwareProfile.h file.    
-    #if defined(USE_USB_BUS_SENSE_IO)
-    tris_usb_bus_sense = INPUT_PIN; // See HardwareProfile.h
-    #endif
-    
-//	If the host PC sends a GetStatus (device) request, the firmware must respond
-//	and let the host know if the USB peripheral device is currently bus powered
-//	or self powered.  See chapter 9 in the official USB specifications for details
-//	regarding this request.  If the peripheral device is capable of being both
-//	self and bus powered, it should not return a hard coded value for this request.
-//	Instead, firmware should check if it is currently self or bus powered, and
-//	respond accordingly.  If the hardware has been configured like demonstrated
-//	on the PICDEM FS USB Demo Board, an I/O pin can be polled to determine the
-//	currently selected power source.  On the PICDEM FS USB Demo Board, "RA2" 
-//	is used for	this purpose.  If using this feature, make sure "USE_SELF_POWER_SENSE_IO"
-//	has been defined in HardwareProfile - (platform).h, and that an appropriate I/O pin 
-//  has been mapped	to it.
-    #if defined(USE_SELF_POWER_SENSE_IO)
-    tris_self_power = INPUT_PIN;	// See HardwareProfile.h
-    #endif
 
     UserInit();
 
@@ -371,30 +309,39 @@ void UserInit(void)
 
 void TouchEnable(void) {
     // Enable interrupt
+    RCONbits.IPEN = 1;      // Enable interrupt priority feature
     INTCONbits.GIE = 1;     // Global interrupt enable
     INTCONbits.PEIE = 1;    // Peripheral interrupt ennable
-    RCONbits.IPEN = 1;      // Enable interrupt priority feature
 
     TRISCbits.RC1 = 1;      // Set interrupt 1 pin as input
     ANSELbits.ANS5 = 0;     // Disable A/D converter on RC1
     INTCON2bits.INTEDG1 = 0;// Interrupt 1 trigger on falling edge
+    INTCON3bits.INT1IP = 0;  // Interrupt 1 low priority
     INTCON3bits.INT1IF = 0;  // Clear int1 flag
-    INTCON3bits.INT1IP = 0;  // Set int1 low priority
     INTCON3bits.INT1IE = 1;  // Enable int1
-
-    // Set I2C pins as inputs
-    TRISBbits.RB6 = 1;
-    LATBbits.LATB6 = 0;
-    TRISBbits.RB4 = 1;
-    LATBbits.LATB4 = 0;
 
     i2c_Init();
 }
 
 void TouchInterrupt(void) {
-    // Read data from the touch screen
+    unsigned int tp = 0;
+
+    if (!INTCON3bits.INT1IF) return;
+    INTCON3bits.INT1IE = 0; // Disable interrupt
+    INTCON3bits.INT1IF = 0; // Reset flag
+    tp = touch_points();
+
+    if (tp > 0) {
+        LED2On();
+    }
+    if (tp > 1) {
+        LED3On();
+    }
+
     touch_read();
     //touch_send();
+
+    INTCON3bits.INT1IE = 1; // Enable interrupt
 }
 
 // ******************************************************************************************************
@@ -965,71 +912,9 @@ void MultiTouchGetReportHandler(void)
 /******************************************************************************
  * Function:     	void touch_send()
  *
- * PreCondition: 	None
- *
- * Input:        	None
- *
- * Output:       	None
- *
  * Side Effects: 	The ownership of the USB buffers will change according
  *               	to the required operation
  *
- * Note: 		Reports of data should be sent to the host matching the Report
- *			Descriptor and the current DeviceMode.
- *			The HID report (IN) packets sent to the host should be formatted like the
- *			report descriptor in the usb_descriptors.c file.  See the usb_descriptors.c
- *			file for additional comments.  For this demo, we use the following report
- *			format:
- *
- *	//Report format for use in multi-touch device mode, which can support up to two
- *	//simultaneous contacts, using the report descriptor provided in usb_descriptors.c:
- *
- *	//Byte[0] = Report ID == use literal value = MULTI_TOUCH_DATA_REPORT_ID when sending contact reports.
- * 	//First contact point info in bytes 1-6.
- *	//Byte[1] = Bits7-2: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
- *	//Byte[2] = Contact identifier number (assigned by firmware, see report descriptor)
- *	//Byte[3] = X-coordinate LSB
- *	//Byte[4] = X-coordinate MSB
- *	//Byte[5] = Y-coordinate LSB
- *	//Byte[6] = Y-coordinate MSB
- *
- *	//Second contact point info in bytes 7-12
- *	//Byte[7] = Bits7-2: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
- *	//Byte[8] = Contact identifier number (assigned by firmware, see report descriptor)
- *	//Byte[9] = X-coordinate LSB
- *	//Byte[10]= X-coordinate MSB
- *	//Byte[11]= Y-coordinate LSB
- *	//Byte[12]= Y-coordinate MSB
- *
- *	//Third contact point info in bytes 13-18
- *	//Byte[13] = Bits7-2: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
- *	//Byte[14] = Contact identifier number (assigned by firmware, see report descriptor)
- *	//Byte[15] = X-coordinate LSB
- *	//Byte[16] = X-coordinate MSB
- *	//Byte[17] = Y-coordinate LSB
- *	//Byte[18] = Y-coordinate MSB
- *
- *	//Contacts valid
- *	//Byte[19]= 8-bit number indicating how many of the above contact points are valid.
- *				If only the first contact is valid, report "1" here.  If 2 are
- *				valid, report "2".  If three are valid, report "3".
- *
- *	When operating in the DeviceMode == SINGLE_TOUCH_DIGITIZER_MODE
- *	The input data reports are different.  In this mode, the device should only keep
- *	track of and send information to the host for the first contact point.  In this
- *	mode, the report sent to the host should be formatted as:
- *	//byte[0] = Report ID = SINGLE_TOUCH_DATA_REPORT_ID
- *	//byte[1] = contains bit fields for various input information typically generated by an input pen or human finger. '1' is the active value (ex: pressed), '0' is the non active value
- *	//		bit0 = Tip switch. At the end of a pen input device would normally be a pressure senstive switch.  Asserting this performs an operation analogous to a "left click" on a mouse
- *	//		bit1 = In range indicator.
- *	//		bit2 though bit7 = Pad bits.  Values not used for anything.
- *	//byte[2] = Pad byte.  Value not used for anything.
- *	//byte[3] = X coordinate LSB value of contact point
- *	//byte[4] = X coordinate MSB value of contact point
- *	//byte[5] = Y coordinate LSB value of contact point
- *	//byte[6] = Y coordinate MSB value of contact point
- *
- *****************************************************************************
  *	//Byte[0] = Report ID == use literal value "0x01" when sending contact reports.
  *
  * 	//First contact point info in bytes 1-6.
@@ -1061,10 +946,10 @@ void touch_send(void) {
         // Report ID for multi-touch contact information reports (based on report descriptor)
 	hid_report_in[0] = 0x01;	//Report ID in byte[0]
 
-        hid_report_in[13] = t_data.data.TD_STATUS & 0b00001111; // Number of valid contacts
+        hid_report_in[13] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
 
         // Touch point 1
-        if (hid_report_in[19] >= 1) {
+        if (hid_report_in[13] >= 1) {
             hid_report_in[1] = 3; // Contact 1, In-range and tip switch
 
             //First contact info in bytes 1-6
@@ -1083,7 +968,7 @@ void touch_send(void) {
         }
 
         // Touch point 2
-        if (hid_report_in[19] >= 2) {
+        if (hid_report_in[13] >= 2) {
             hid_report_in[7] = 3; // Contact 2, In-range and tip switch
 
             hid_report_in[8] = (t_data.data.TOUCH2_YH >> 4) & 0x00001111;//Contact ID

@@ -49,6 +49,7 @@ extern "C" {
 
     void touch_read(void);
     void touch_send(void);
+    unsigned int touch_points(void);
 
 
 #ifdef	__cplusplus
