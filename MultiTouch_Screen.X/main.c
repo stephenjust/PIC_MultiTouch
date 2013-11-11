@@ -171,7 +171,7 @@ void TouchInterrupt(void);
 	//during USB suspend.
 	//--------------------------------------------------------------------	
 #pragma code
-unsigned int ti_running = 0;
+BOOL send_state = 0;
 
 	//These are your actual interrupt handling routines.
 	#pragma interrupt YourHighPriorityISRCode
@@ -222,7 +222,7 @@ unsigned int ti_running = 0;
  * Note:            None
  *******************************************************************/
 void main(void)
-{   
+{
     InitializeSystem();
 
     USBDeviceAttach();
@@ -231,6 +231,10 @@ void main(void)
 
     while(1)
     {
+        if (send_state) {
+            send_state = 0;
+            touch_send();
+        }
 	// Code happens in interrupts
     }//end while
 }//end main
@@ -339,7 +343,7 @@ void TouchInterrupt(void) {
     }
 
     touch_read();
-    //touch_send();
+    send_state = 1;
 
     INTCON3bits.INT1IE = 1; // Enable interrupt
 }
@@ -941,71 +945,58 @@ void touch_send(void) {
 
 	//Make sure the endpoint buffer (in this case hid_report_in[] is not busy
 	//before we modify the contents of the buffer for the next transmission.
-    if(!USBHandleBusy(lastTransmission))
-    {
-        // Report ID for multi-touch contact information reports (based on report descriptor)
-	hid_report_in[0] = 0x01;	//Report ID in byte[0]
+    if(USBHandleBusy(lastTransmission)) return;
 
-        hid_report_in[13] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
+    // Report ID for multi-touch contact information reports (based on report descriptor)
+    hid_report_in[0] = 0x01;	//Report ID in byte[0]
 
-        // Touch point 1
-        if (hid_report_in[13] >= 1) {
-            hid_report_in[1] = 3; // Contact 1, In-range and tip switch
+    hid_report_in[13] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
 
-            //First contact info in bytes 1-6
-            hid_report_in[2] = (t_data.data.TOUCH1_YH >> 4) & 0x00001111;//Contact ID
-            hid_report_in[3] = t_data.data.TOUCH1_XL;                   //X-coord LSB
-            hid_report_in[4] = t_data.data.TOUCH1_XH & 0x00001111;	//X-coord MSB
-            hid_report_in[5] = t_data.data.TOUCH1_YL;			//Y-coord LSB
-            hid_report_in[6] = t_data.data.TOUCH1_YH & 0x00001111;		//Y-coord MSB
-        } else {
-            hid_report_in[1] = 0;
-            hid_report_in[2] = 0;
-            hid_report_in[3] = 0;
-            hid_report_in[4] = 0;
-            hid_report_in[5] = 0;
-            hid_report_in[6] = 0;
-        }
-
-        // Touch point 2
-        if (hid_report_in[13] >= 2) {
-            hid_report_in[7] = 3; // Contact 2, In-range and tip switch
-
-            hid_report_in[8] = (t_data.data.TOUCH2_YH >> 4) & 0x00001111;//Contact ID
-            hid_report_in[9] = t_data.data.TOUCH2_XL;                   //X-coord LSB
-            hid_report_in[10] = t_data.data.TOUCH2_XH & 0x00001111;	//X-coord MSB
-            hid_report_in[11] = t_data.data.TOUCH2_YL;			//Y-coord LSB
-            hid_report_in[12] = t_data.data.TOUCH2_YH & 0x00001111;	//Y-coord MSB
-        } else {
-            hid_report_in[7] = 0;
-            hid_report_in[8] = 0;
-            hid_report_in[9] = 0;
-            hid_report_in[10] = 0;
-            hid_report_in[11] = 0;
-            hid_report_in[12] = 0;
-        }
-
-        /*
-        // Touch point 3
-        if (hid_report_in[19] >= 3) {
-            hid_report_in[13] = 3; // Contact 2, In-range and tip switch
-
-            hid_report_in[14] = (t_data.data.TOUCH3_YH >> 4) & 0x00001111;//Contact ID
-            hid_report_in[15] = t_data.data.TOUCH3_XL;                   //X-coord LSB
-            hid_report_in[16] = t_data.data.TOUCH3_XH & 0x00001111;	//X-coord MSB
-            hid_report_in[17] = t_data.data.TOUCH3_YL;			//Y-coord LSB
-            hid_report_in[18] = t_data.data.TOUCH3_YH & 0x00001111;	//Y-coord MSB
-        } else {
-            hid_report_in[13] = 0;
-            hid_report_in[14] = 0;
-            hid_report_in[15] = 0;
-            hid_report_in[16] = 0;
-            hid_report_in[17] = 0;
-            hid_report_in[18] = 0;
-        }*/
-
-        lastTransmission = HIDTxPacket(HID_EP, (BYTE*)hid_report_in, 14);
+    // Touch point 1
+    if (hid_report_in[13] >= 1) {
+        hid_report_in[1] = 3; // Contact 1, In-range and tip switch
+    } else {
+        hid_report_in[1] = 0;
     }
+    //First contact info in bytes 1-6
+    hid_report_in[2] = (t_data.data.TOUCH1_YH >> 4) & 0x00001111;//Contact ID
+    hid_report_in[3] = t_data.data.TOUCH1_XL;                   //X-coord LSB
+    hid_report_in[4] = t_data.data.TOUCH1_XH & 0x00001111;	//X-coord MSB
+    hid_report_in[5] = t_data.data.TOUCH1_YL;			//Y-coord LSB
+    hid_report_in[6] = t_data.data.TOUCH1_YH & 0x00001111;		//Y-coord MSB
+
+    // Touch point 2
+    if (hid_report_in[13] >= 2) {
+        hid_report_in[7] = 3; // Contact 2, In-range and tip switch
+    } else {
+        hid_report_in[7] = 0;
+    }
+    hid_report_in[8] = (t_data.data.TOUCH2_YH >> 4) & 0x00001111;//Contact ID
+    hid_report_in[9] = t_data.data.TOUCH2_XL;                   //X-coord LSB
+    hid_report_in[10] = t_data.data.TOUCH2_XH & 0x00001111;	//X-coord MSB
+    hid_report_in[11] = t_data.data.TOUCH2_YL;			//Y-coord LSB
+    hid_report_in[12] = t_data.data.TOUCH2_YH & 0x00001111;	//Y-coord MSB
+
+    /*
+    // Touch point 3
+    if (hid_report_in[19] >= 3) {
+        hid_report_in[13] = 3; // Contact 2, In-range and tip switch
+
+        hid_report_in[14] = (t_data.data.TOUCH3_YH >> 4) & 0x00001111;//Contact ID
+        hid_report_in[15] = t_data.data.TOUCH3_XL;                   //X-coord LSB
+        hid_report_in[16] = t_data.data.TOUCH3_XH & 0x00001111;	//X-coord MSB
+        hid_report_in[17] = t_data.data.TOUCH3_YL;			//Y-coord LSB
+        hid_report_in[18] = t_data.data.TOUCH3_YH & 0x00001111;	//Y-coord MSB
+    } else {
+        hid_report_in[13] = 0;
+        hid_report_in[14] = 0;
+        hid_report_in[15] = 0;
+        hid_report_in[16] = 0;
+        hid_report_in[17] = 0;
+        hid_report_in[18] = 0;
+    }*/
+
+    lastTransmission = HIDTxPacket(HID_EP, (BYTE*)hid_report_in, 14);
 }
 
 /** EOF MultiTouch_MultiModes.c *************************************************/
