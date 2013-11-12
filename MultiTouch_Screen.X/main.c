@@ -177,8 +177,10 @@ BOOL send_state = 0;
 	#pragma interrupt YourHighPriorityISRCode
 	void YourHighPriorityISRCode()
 	{
+            if (UIRbits.UERRIF)
+                LED1On();
+
             // USB device interrupt
-            LED1On();
             #if defined(USB_INTERRUPT)
                 USBDeviceTasks();
             #endif
@@ -186,7 +188,6 @@ BOOL send_state = 0;
             //Service the interrupt
             //Clear the interrupt flag
             //Etc.
-            LED1Off();
 	
 	}	//This return will be a "retfie fast", since this is in a #pragma interrupt section 
 	#pragma interruptlow YourLowPriorityISRCode
@@ -231,10 +232,6 @@ void main(void)
 
     while(1)
     {
-        if (send_state) {
-            send_state = 0;
-            touch_send();
-        }
 	// Code happens in interrupts
     }//end while
 }//end main
@@ -247,14 +244,6 @@ void InitLEDs(void) {
 
 /********************************************************************
  * Function:        static void InitializeSystem(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        InitializeSystem is a centralize initialization
  *                  routine. All required USB initialization routines
@@ -274,6 +263,9 @@ static void InitializeSystem(void)
 
     USBDeviceInit();	//usb_device.c.  Initializes USB module SFRs and firmware
     					//variables to known states.
+
+    // Disable BOR (this was causing random reboots)
+    RCONbits.SBOREN = 0;
 
 }//end InitializeSystem
 
@@ -328,22 +320,12 @@ void TouchEnable(void) {
 }
 
 void TouchInterrupt(void) {
-    unsigned int tp = 0;
-
     if (!INTCON3bits.INT1IF) return;
     INTCON3bits.INT1IE = 0; // Disable interrupt
     INTCON3bits.INT1IF = 0; // Reset flag
-    tp = touch_points();
-
-    if (tp > 0) {
-        LED2On();
-    }
-    if (tp > 1) {
-        LED3On();
-    }
 
     touch_read();
-    send_state = 1;
+    touch_send();
 
     INTCON3bits.INT1IE = 1; // Enable interrupt
 }
@@ -372,14 +354,6 @@ void TouchInterrupt(void) {
 
 /******************************************************************************
  * Function:        void USBCBSuspend(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        Call back that is invoked when a USB suspend is detected
  *
@@ -440,14 +414,6 @@ void USBCBSuspend(void)
 
 /******************************************************************************
  * Function:        void USBCBWakeFromSuspend(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        The host may put USB peripheral devices in low power
  *					suspend mode (by "sending" 3+ms of idle).  Once in suspend
@@ -524,14 +490,6 @@ void USBCB_SOF_Handler(void)
 /*******************************************************************
  * Function:        void USBCBErrorHandler(void)
  *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        The purpose of this callback is mainly for
  *                  debugging during development. Check UEIR to see
  *                  which error causes the interrupt.
@@ -543,34 +501,26 @@ void USBCBErrorHandler(void)
     // No need to clear UEIR to 0 here.
     // Callback caller is already doing that.
 
-	// Typically, user firmware does not need to do anything special
-	// if a USB error occurs.  For example, if the host sends an OUT
-	// packet to your device, but the packet gets corrupted (ex:
-	// because of a bad connection, or the user unplugs the
-	// USB cable during the transmission) this will typically set
-	// one or more USB error interrupt flags.  Nothing specific
-	// needs to be done however, since the SIE will automatically
-	// send a "NAK" packet to the host.  In response to this, the
-	// host will normally retry to send the packet again, and no
-	// data loss occurs.  The system will typically recover
-	// automatically, without the need for application firmware
-	// intervention.
-	
-	// Nevertheless, this callback function is provided, such as
-	// for debugging purposes.
+    // Typically, user firmware does not need to do anything special
+    // if a USB error occurs.  For example, if the host sends an OUT
+    // packet to your device, but the packet gets corrupted (ex:
+    // because of a bad connection, or the user unplugs the
+    // USB cable during the transmission) this will typically set
+    // one or more USB error interrupt flags.  Nothing specific
+    // needs to be done however, since the SIE will automatically
+    // send a "NAK" packet to the host.  In response to this, the
+    // host will normally retry to send the packet again, and no
+    // data loss occurs.  The system will typically recover
+    // automatically, without the need for application firmware
+    // intervention.
+
+    if (UEIR)
+        LED3On();
 }
 
 
 /*******************************************************************
  * Function:        void USBCBCheckOtherReq(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        When SETUP packets arrive from the host, some
  * 					firmware must process the request and respond
@@ -598,14 +548,6 @@ void USBCBCheckOtherReq(void)
 /*******************************************************************
  * Function:        void USBCBStdSetDscHandler(void)
  *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        The USBCBStdSetDscHandler() callback function is
  *					called when a SETUP, bRequest: SET_DESCRIPTOR request
  *					arrives.  Typically SET_DESCRIPTOR requests are
@@ -622,14 +564,6 @@ void USBCBStdSetDscHandler(void)
 
 /*******************************************************************
  * Function:        void USBCBInitEP(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        This function is called when the device becomes
  *                  initialized, which occurs after the host sends a
@@ -649,40 +583,15 @@ void USBCBInitEP(void)
 /********************************************************************
  * Function:        void USBCBSendResume(void)
  *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        The USB specifications allow some types of USB
- * 					peripheral devices to wake up a host PC (such
- *					as if it is in a low power suspend to RAM state).
- *					This can be a very useful feature in some
- *					USB applications, such as an Infrared remote
- *					control	receiver.  If a user presses the "power"
- *					button on a remote control, it is nice that the
- *					IR receiver can detect this signalling, and then
- *					send a USB "command" to the PC to wake up.
- *					
- *					The USBCBSendResume() "callback" function is used
- *					to send this special USB signalling which wakes 
- *					up the PC.  This function may be called by
- *					application firmware to wake up the PC.  This
- *					function will only be able to wake up the host if
- *                  all of the below are true:
- *					
- *					1.  The USB driver used on the host PC supports
- *						the remote wakeup capability.
- *					2.  The USB configuration descriptor indicates
- *						the device is remote wakeup capable in the
- *						bmAttributes field.
- *					3.  The USB host PC is currently sleeping,
- *						and has previously sent your device a SET 
- *						FEATURE setup packet which "armed" the
- *						remote wakeup capability.   
+ *                  peripheral devices to wake up a host PC (such
+ *                  as if it is in a low power suspend to RAM state).
+ *                  This can be a very useful feature in some
+ *                  USB applications, such as an Infrared remote
+ *                  control receiver. If a user presses the "power"
+ *                  button on a remote control, it is nice that the
+ *                  IR receiver can detect this signalling, and then
+ *                  send a USB "command" to the PC to wake up.
  *
  *                  If the host has not armed the device to perform remote wakeup,
  *                  then this function will return without actually performing a
@@ -691,7 +600,7 @@ void USBCBInitEP(void)
  *                  wakeup must not drive remote wakeup signalling onto the bus;
  *                  doing so will cause USB compliance testing failure.
  *                  
- *					This callback should send a RESUME signal that
+ *                  This callback should send a RESUME signal that
  *                  has the period of 1-15ms.
  *
  * Note:            This function does nothing and returns quickly, if the USB
@@ -791,15 +700,9 @@ void USBCBSendResume(void)
  * Function:        BOOL USER_USB_CALLBACK_EVENT_HANDLER(
  *                        int event, void *pdata, WORD size)
  *
- * PreCondition:    None
- *
  * Input:           int event - the type of event
  *                  void *pdata - pointer to the event data
  *                  WORD size - size of the event data
- *
- * Output:          None
- *
- * Side Effects:    None
  *
  * Overview:        This function is called from the USB stack to
  *                  notify a user application that a USB event
@@ -813,7 +716,6 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(int event, void *pdata, WORD size)
     switch( event )
     {
         case EVENT_TRANSFER:
-            //Add application specific callback task or callback function here if desired.
             break;
         case EVENT_SOF:
             USBCB_SOF_Handler();
@@ -837,14 +739,6 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(int event, void *pdata, WORD size)
             USBCBErrorHandler();
             break;
         case EVENT_TRANSFER_TERMINATED:
-            //Add application specific callback task or callback function here if desired.
-            //The EVENT_TRANSFER_TERMINATED event occurs when the host performs a CLEAR
-            //FEATURE (endpoint halt) request on an application endpoint which was 
-            //previously armed (UOWN was = 1).  Here would be a good place to:
-            //1.  Determine which endpoint the transaction that just got terminated was 
-            //      on, by checking the handle value in the *pdata.
-            //2.  Re-arm the endpoint if desired (typically would be the case for OUT 
-            //      endpoints).
             break;
         default:
             break;
@@ -852,64 +746,51 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(int event, void *pdata, WORD size)
     return TRUE; 
 }
 
-// *****************************************************************************
-// ************** USB Class Specific Callback Function(s) **********************
-// *****************************************************************************
-
 /********************************************************************
  * Function:        void MultiGetTouchReportHandler(void)
  *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
  * Overview:        MultiTouchGetReportHandler() is used to respond to
- *					the HID device class specific GET_REPORT control
- *					transfer request (starts with SETUP packet on EP0 OUT).  
+ *                  the HID device class specific GET_REPORT control
+ *                  transfer request (starts with SETUP packet on EP0 OUT).
  *                  This get report handler callback function is placed
- *					here instead of in usb_function_hid.c, since this code
- *					is "custom" and needs to be specific to this particular 
- *					application example.  For this HID digitizer device,
- *					we need to be able to correctly respond to 
- *					GET_REPORT(feature)	requests.  The proper response to this
- *					type of request depends on the HID report descriptor (in 
- *					usb_descriptors.c).
- * Note:            
+ *                  here instead of in usb_function_hid.c, since this code
+ *                  is "custom" and needs to be specific to this particular
+ *                  application example.  For this HID digitizer device,
+ *                  we need to be able to correctly respond to
+ *                  GET_REPORT(feature)	requests.  The proper response to this
+ *                  type of request depends on the HID report descriptor (in
+ *                  usb_descriptors.c).
  *******************************************************************/
 void MultiTouchGetReportHandler(void)
 {
     static BYTE FeatureReport[2];
     BYTE bytesToSend;
 
-	//Check if request was for a feature report with report ID = 0x02.
-	//wValue MSB = 0x03 is Feature report (see HID1_11.pdf specifications),
-	//LSB = 0x02 is Report ID "0x02".  Based on the report descriptor, a feature
-	//report for this example project has Report ID = 0x02.
-	if(SetupPkt.wValue == 0x0302)
-	{
-    	//Prepare a packet to send to the host
-		FeatureReport[1] = 0x02;
-		FeatureReport[0] = 0x02;
+    //Check if request was for a feature report with report ID = 0x02.
+    //wValue MSB = 0x03 is Feature report (see HID1_11.pdf specifications),
+    //LSB = 0x02 is Report ID "0x02".  Based on the report descriptor, a feature
+    //report for this example project has Report ID = 0x02.
+    if(SetupPkt.wValue == 0x0302)
+    {
+        //Prepare a packet to send to the host
+        FeatureReport[1] = 0x05; // Maximum number of contacts
+        FeatureReport[0] = 0x02;
 
-		//Determine the number of bytes to send to the host
-		if(SetupPkt.wLength < 2u)
-		{
-			bytesToSend = SetupPkt.wLength;
-		}
-		else
-		{
-			//Size of the feature report.  Byte 0 is Report ID = 0x02, Byte 1 is
-			//the maximum contacts value, which is "2" for this demo
-			bytesToSend = 2;
-		}
+        //Determine the number of bytes to send to the host
+        if(SetupPkt.wLength < 2u)
+        {
+            bytesToSend = SetupPkt.wLength;
+        }
+        else
+        {
+            //Size of the feature report.  Byte 0 is Report ID = 0x02, Byte 1 is
+            //the maximum contacts value, which is "2" for this demo
+            bytesToSend = 2;
+        }
 
-		//Now send the packet to the host, via the control transfer on EP0
-		USBEP0SendRAMPtr((BYTE*)&FeatureReport[0], bytesToSend, USB_EP0_RAM);
-	}	
+        //Now send the packet to the host, via the control transfer on EP0
+        USBEP0SendRAMPtr((BYTE*)&FeatureReport[0], bytesToSend, USB_EP0_RAM);
+    }
 }
 
 
@@ -943,21 +824,22 @@ void MultiTouchGetReportHandler(void)
  *				valid, report "2". */
 void touch_send(void) {
 
-	//Make sure the endpoint buffer (in this case hid_report_in[] is not busy
-	//before we modify the contents of the buffer for the next transmission.
+#define T_COUNT_INDEX 31
+
+    //Make sure the endpoint buffer (in this case hid_report_in[] is not busy
+    //before we modify the contents of the buffer for the next transmission.
     if(USBHandleBusy(lastTransmission)) return;
 
     // Report ID for multi-touch contact information reports (based on report descriptor)
     hid_report_in[0] = 0x01;	//Report ID in byte[0]
 
-    hid_report_in[13] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
+    hid_report_in[T_COUNT_INDEX] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
 
     // Touch point 1
-    if (hid_report_in[13] >= 1) {
-        hid_report_in[1] = 3; // Contact 1, In-range and tip switch
-    } else {
+    if (hid_report_in[T_COUNT_INDEX] >= 1)
+        hid_report_in[1] = 3;
+    else
         hid_report_in[1] = 0;
-    }
     //First contact info in bytes 1-6
     hid_report_in[2] = (t_data.data.TOUCH1_YH >> 4) & 0x00001111;//Contact ID
     hid_report_in[3] = t_data.data.TOUCH1_XL;                   //X-coord LSB
@@ -966,37 +848,50 @@ void touch_send(void) {
     hid_report_in[6] = t_data.data.TOUCH1_YH & 0x00001111;		//Y-coord MSB
 
     // Touch point 2
-    if (hid_report_in[13] >= 2) {
-        hid_report_in[7] = 3; // Contact 2, In-range and tip switch
-    } else {
+    if (hid_report_in[T_COUNT_INDEX] >= 2)
+        hid_report_in[7] = 3;
+    else
         hid_report_in[7] = 0;
-    }
     hid_report_in[8] = (t_data.data.TOUCH2_YH >> 4) & 0x00001111;//Contact ID
     hid_report_in[9] = t_data.data.TOUCH2_XL;                   //X-coord LSB
     hid_report_in[10] = t_data.data.TOUCH2_XH & 0x00001111;	//X-coord MSB
     hid_report_in[11] = t_data.data.TOUCH2_YL;			//Y-coord LSB
-    hid_report_in[12] = t_data.data.TOUCH2_YH & 0x00001111;	//Y-coord MSB
+    hid_report_in[12] = 0;	//Y-coord MSB
 
-    /*
     // Touch point 3
-    if (hid_report_in[19] >= 3) {
-        hid_report_in[13] = 3; // Contact 2, In-range and tip switch
-
-        hid_report_in[14] = (t_data.data.TOUCH3_YH >> 4) & 0x00001111;//Contact ID
-        hid_report_in[15] = t_data.data.TOUCH3_XL;                   //X-coord LSB
-        hid_report_in[16] = t_data.data.TOUCH3_XH & 0x00001111;	//X-coord MSB
-        hid_report_in[17] = t_data.data.TOUCH3_YL;			//Y-coord LSB
-        hid_report_in[18] = t_data.data.TOUCH3_YH & 0x00001111;	//Y-coord MSB
-    } else {
+    if (hid_report_in[T_COUNT_INDEX] >= 3)
+        hid_report_in[13] = 3;
+    else
         hid_report_in[13] = 0;
-        hid_report_in[14] = 0;
-        hid_report_in[15] = 0;
-        hid_report_in[16] = 0;
-        hid_report_in[17] = 0;
-        hid_report_in[18] = 0;
-    }*/
+    hid_report_in[14] = (t_data.data.TOUCH3_YH >> 4) & 0x00001111;//Contact ID
+    hid_report_in[15] = t_data.data.TOUCH3_XL;                   //X-coord LSB
+    hid_report_in[16] = t_data.data.TOUCH3_XH & 0x00001111;	//X-coord MSB
+    hid_report_in[17] = t_data.data.TOUCH3_YL;			//Y-coord LSB
+    hid_report_in[18] = 0;	//Y-coord MSB
 
-    lastTransmission = HIDTxPacket(HID_EP, (BYTE*)hid_report_in, 14);
+    // Touch point 4
+    if (hid_report_in[T_COUNT_INDEX] >= 4)
+        hid_report_in[19] = 3;
+    else
+        hid_report_in[19] = 0;
+    hid_report_in[20] = (t_data.data.TOUCH4_YH >> 4) & 0x00001111;//Contact ID
+    hid_report_in[21] = t_data.data.TOUCH4_XL;                   //X-coord LSB
+    hid_report_in[22] = t_data.data.TOUCH4_XH & 0x00001111;	//X-coord MSB
+    hid_report_in[23] = t_data.data.TOUCH4_YL;			//Y-coord LSB
+    hid_report_in[24] = 0;	//Y-coord MSB
+
+    // Touch point 5
+    if (hid_report_in[T_COUNT_INDEX] >= 5)
+        hid_report_in[25] = 3;
+    else
+        hid_report_in[25] = 0;
+    hid_report_in[26] = (t_data.data.TOUCH5_YH >> 4) & 0x00001111;//Contact ID
+    hid_report_in[27] = t_data.data.TOUCH5_XL;                   //X-coord LSB
+    hid_report_in[28] = t_data.data.TOUCH5_XH & 0x00001111;	//X-coord MSB
+    hid_report_in[29] = t_data.data.TOUCH5_YL;			//Y-coord LSB
+    hid_report_in[30] = 0;	//Y-coord MSB
+
+    lastTransmission = HIDTxPacket(HID_EP, (BYTE*)hid_report_in, 32);
 }
 
 /** EOF MultiTouch_MultiModes.c *************************************************/

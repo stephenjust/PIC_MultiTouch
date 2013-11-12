@@ -224,8 +224,8 @@ ROM BYTE configDescriptor1[]={
 
 //Language code string descriptor
 ROM struct{BYTE bLength;BYTE bDscType;WORD string[1];}sd000={
-sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409
-}};
+sizeof(sd000),USB_DESCRIPTOR_STRING,
+{0x0409}};
 
 //Manufacturer string descriptor
 ROM struct{BYTE bLength;BYTE bDscType;WORD string[25];}sd001={
@@ -235,155 +235,58 @@ sizeof(sd001),USB_DESCRIPTOR_STRING,
 }};
 
 //Product string descriptor
-ROM struct{BYTE bLength;BYTE bDscType;WORD string[20];}sd002={
+ROM struct{BYTE bLength;BYTE bDscType;WORD string[19];}sd002={
 sizeof(sd002),USB_DESCRIPTOR_STRING,
-{'H','I','D',' ','M','u','l','t','i','-','T','o','u','c','h',' ','D','e','m','o'}};
+{'M','u','l','t','i','-','T','o','u','c','h',' ','D','i','s','p','l','a','y'}};
 
 
-//Class specific descriptor - HID report descriptor:
+//HID Report Descriptor for a 5-contact multi-touch digitizer.
+ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
+    //Byte[0] = Report ID == 0x01 == When sending packets of contact information to the host, use the literal value Report ID = 0x01 for this example.
 
-//In order to understand the HID report descriptor, it is helpful to become familiar
-//with the HID specifications (HID1_11.pdf was used to develop this example), and the
-//"HUT" (HID Usage Tables) specifications (Hut1_12.pdf was used during development of this example).
-//These documents can be found at the USB implementers forum website: www.usb.org
+    //First contact point info in bytes 1-6.
+    //Byte[1] = Bits7-3: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
+    //Byte[2] = Contact identifier number (see note below)
+    //Byte[3] = X-coordinate LSB
+    //Byte[4] = X-coordinate MSB
+    //Byte[5] = Y-coordinate LSB
+    //Byte[6] = Y-coordinate MSB
+    //...
+    //Byte[n]= 8-bit number indicating how many of the above contact points are valid.
 
-//Additionally, Microsoft provides a few reference documents pertaining to the development of
-//HID touch/multi-touch devices for Windows Touch enabled operating systems.
-//The below example HID report descriptor is almost identical to one of Microsoft's example
-//descriptors.  Microsoft provides some example descriptors and background information in
-//the following documents:
-
-//"Digitizer Drivers for Windows Touch and Pen-Based Computers" (publicly available download: DigitizerDrvs_touch.docx)
-//"Human Interface Device (HID) Extensions and Windows/Device Protocol for Multi-Touch Digitizers" (not
-	//currently a public document[but might be in the future??], contact Microsoft if a
-	//public version is unavailable.  However, this document isn't critical to developing
-	//a touch/multi-touch device.  Most of the relevant content is already in the "Digitizer
-	//Drivers for Windows Touch and Pen-Based Computers" document, and in Microsoft's developer
-	//blogs relating to Windows 7 Touch)
-
-
-//At a minimum a multi-touch capable finger input digitizer
-//must support the following report information (one set of data for each simultaneous contact supported):
-//"Tip Switch" (ex: a soft button, indicating that the tip of the human's finger is touching the screen)
-//"In-range" indicator: For example, if the touch screen can detect when the user's finger is
-//		hovering over an area, but not in direct contact (ex: it uses optical detection
-//		methods), it may set the in-range indicator bit, but not necessarily simultanously
-//		set the tip switch.  If a hard contact is detected, both the tip switch and in
-//		range bits should be set.
-//X coordinate of contact point (see note)
-//Y coordinate of contact point (see note)
-//Other input usages are optional.
-
-//NOTE (X/Y Coordinates): The origin is the upper left corner of the screen.  For the X coordinates,
-//the leftmost part of the screen has X coordinate = 0.  The rightmost edge of the screen has
-//X coordinate = 4800 (for this example HID report descriptor).  The topmost part of the screen
-//has Y coordinate = 0.  The bottom most part of the screen has Y coordinate = 3000 for this
-//example HID report descriptor.
-
-ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={
-	{
-//Below is the report descriptor for an example multi-touch device, which can support
-//up to two simultaneous contacts.  Based on the report descriptor, the application
-//firmware should send IN data packets over the HID IN endpoint, which should be
-//formatted like shown below:
-
-//Byte[0] = Report ID == 0x01 == When sending packets of contact information to the host, use the literal value Report ID = 0x01 for this example.
-
-//First contact point info in bytes 1-6.
-//Byte[1] = Bits7-3: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
-//Byte[2] = Contact identifier number (see note below)
-//Byte[3] = X-coordinate LSB
-//Byte[4] = X-coordinate MSB
-//Byte[5] = Y-coordinate LSB
-//Byte[6] = Y-coordinate MSB
-
-//Second contact point info in bytes 7-12
-//Byte[7] = Bits7-3: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
-//Byte[8] = Contact identifier number (see note below)
-//Byte[9] = X-coordinate LSB
-//Byte[10]= X-coordinate MSB
-//Byte[11]= Y-coordinate LSB
-//Byte[12]= Y-coordinate MSB
-
-//Byte[13]= 8-bit number indicating how many of the above contact points are valid.
-//			If only the first contact is valid, send "1" here.  If both are valid, send "2".
-
-//Each IN packet (HID report) sent to the host is therefore 14 bytes long (Bytes 0-13).
-//The data is sent in little endian format.  To send the report to the host, verify
-//that the HID IN endpoint buffer is not already busy, then place the data in the HID
-//IN endpoint buffer SRAM, and then call the HIDTxPacket() function.  The data will
-//then get sent to the host, at the next opportunity when the host polls that endpoint
-//(by sending an IN token packet to the endpoint).
-
-//NOTE (Contact identifier number): For a multi-touch device, the firmware needs to
-//keep track of each contact point separately and independantly.  For example, suppose
-//a human first presses one finger to the screen.  The firmware would detect this, and
-//it should arbitrarily assign a contact identifier number for this contact. Typically
-//it would be assigned something like contact ID = "1". As the human moves their finger
-//around on the contact surface the firmware will report new X and Y coordinate
-//information for this contact, but the contact ID byte should always be = "1" for
-//this contact.
-//
-//Now suppose the human places a second finger onto the touch surface, so there are
-//two simultanous contacts.  The firmware should assign this second contact a new
-//contact ID, for instance, contact ID = "2".  So long as the first contact is still
-//valid, the firmware needs to continue reporting ID = "1" for the first contact.
-//The firmware will continue to report information using these contact ID numbers
-//until such time as a contact becomes invalid (human removes their finger from the
-//screen).
-
-
-//In addition to standard HID reports (containing contact X/Y/tip-switch/in-range
-//information), the firmware can send feature report information to the host.
-//Feature reports lets the host know information about the firmware/hardware
-//application design.  The host will typically request a feature report by sending
-//a GET_REPORT control transfer, with the bRequest = REPORT, but with wIndex (MSB) = 0x03
-//(get feature report request as indicated in the HID1_11.pdf specifications). If a
-//feature report is sent to the host, it should be sent as a 2-byte packet (for
-//this example project), formatted like follows:
-
-//Byte[0]= Report ID == 0x02 == Feature report ID for this example.
-//Byte[1]= Maximum number of contacts simultaneously supported by this application.  Always == 2 in this demo, since this report descriptor only has input fields for 2 contact points
-//See the MultiTouchGetReportHandler() function that sends this type of packet in the MultiTouch.c file.
-
-	//Example HID Report Descriptor for a 2-contact multi-touch digitizer.  Additional contacts can be supported by duplicating the "COLLECTION (Logical)" sections.
-	//Note: In a real application, at a minimum, certain terms in the report descriptor
-	//(ex: UNIT, UNIT_EXPONENT, PHYSICAL_MAXIMUM and LOGICAL_MAXIMUM) will need to be modified to
-	//match the characteristics (ex: size) of the actual application being developed.  See the HID1_11.pdf
-	//specifications regarding these terms.
     0x05, 0x0D,	          // USAGE_PAGE (Digitizers)
     0x09, 0x04,	          // USAGE (Touch Screen)
     0xA1, 0x01,           // COLLECTION (Application)
-    0x85, 0x01,			  //   REPORT_ID (Touch)              	//When the firmware wants to send a HID report (containing contact information), the Report ID byte should match this number (0x01 in this case).
-    0x09, 0x22,           //   USAGE (Finger)
+    0x85, 0x01, 	  //   REPORT_ID (Touch)              	//When the firmware wants to send a HID report (containing contact information), the Report ID byte should match this number (0x01 in this case).
+    0x09, 0x22,  //10     //   USAGE (Finger)
     0xA1, 0x02,           //     COLLECTION (Logical)
     0x09, 0x42,           //       USAGE (Tip Switch)
     0x15, 0x00,           //       LOGICAL_MINIMUM (0)
     0x25, 0x01,           //       LOGICAL_MAXIMUM (1)
-    0x75, 0x01,           //       REPORT_SIZE (1)
+    0x75, 0x01,  //20     //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for tip switch
     0x09, 0x32,	          //       USAGE (In Range)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range indicator
-    0x95, 0x06,           //       REPORT_COUNT (6)
+    0x95, 0x06,  //30     //       REPORT_COUNT (6)
     0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields, which are pad bits (no valid data)
     0x75, 0x08,           //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,           //       REPORT_COUNT (1)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 8-bit field for the contact identifier number.  Firmware arbitrarily assigns a contact ID, which stays the same until the contact becomes invalid (finger removed from screen).
+    0x81, 0x02,  //40     //       INPUT (Data,Var,Abs) 		//Makes one, 8-bit field for the contact identifier number.  Firmware arbitrarily assigns a contact ID, which stays the same until the contact becomes invalid (finger removed from screen).
     0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
-   	0x26, 0xC0, 0x12,     //       LOGICAL_MAXIMUM (4800)   	//This is the maximum value the firmware should send for the X coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNITS parameter).
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)   	//This is the maximum value the firmware should send for the X coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNITS parameter).
     0x75, 0x10,           //       REPORT_SIZE (16)
     0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
     0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
     0x09, 0x30,           //       USAGE (X)
     0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
-    0x46, 0x40, 0x06,     //       PHYSICAL_MAXIMUM (0x640 = 1600)     //1600 * 10^(-2) = 16 inches X-dimension
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800 (4800 is the LOGICAL_MAXIMUM, which would correspond to far edge of the screen, which is 1600x10mil distance from X origin [left of screen])
-    0x26, 0xB8, 0x0B,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y) (ex: 4800/3000 = 16/10).  //This is the maximum value the firmware should send for the Y coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNIT parameter).
-    0x46, 0xE8, 0x03,     //       PHYSICAL_MAXIMUM (0x3E8 = 1000)    //1000 * 10^(-2) = 10 inches Y-dimension
+    0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
+    0x81, 0x02,  //60     //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800 (4800 is the LOGICAL_MAXIMUM, which would correspond to far edge of the screen, which is 1600x10mil distance from X origin [left of screen])
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y) (ex: 4800/3000 = 16/10).  //This is the maximum value the firmware should send for the Y coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNIT parameter).
+    0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
     0x09, 0x31,           //       USAGE (Y)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for Y coordinate info.  Valid values from: 0-3000 (3000 is the LOGICAL_MAIXMUM, which would correspond to the far bottom of the screen, which is 1000x10mil distance from the Y origin [top of screen])
+    0x81, 0x02,  //70     //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for Y coordinate info.  Valid values from: 0-3000 (3000 is the LOGICAL_MAIXMUM, which would correspond to the far bottom of the screen, which is 1000x10mil distance from the Y origin [top of screen])
     0xC0,                 //    END_COLLECTION
     0xA1, 0x02,           //    COLLECTION (Logical)
     0x05, 0x0D,	          //       USAGE_PAGE (Digitizers)
@@ -402,29 +305,119 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
     0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
-    0x26, 0xC0, 0x12,     //       LOGICAL_MAXIMUM (4800)
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)
+    0x75, 0x10,  //110    //       REPORT_SIZE (16)
+    0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
+    0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
+    0x09, 0x30,           //       USAGE (X)
+    0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
+    0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
+    0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
+    0x09, 0x31,           //       USAGE (Y)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
+    0xC0,                 //    END_COLLECTION
+    0xA1, 0x02,           //    COLLECTION (Logical)
+    0x05, 0x0D,	          //       USAGE_PAGE (Digitizers)
+    0x09, 0x42,  //140    //       USAGE (Tip Switch)
+    0x15, 0x00,           //       LOGICAL_MINIMUM (0)
+    0x25, 0x01,           //       LOGICAL_MAXIMUM (1)
+    0x75, 0x01,           //       REPORT_SIZE (1)
+    0x95, 0x01,           //       REPORT_COUNT (1)
+    0x81, 0x02,  //150    //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
+    0x09, 0x32,	          //       USAGE (In Range)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
+    0x95, 0x06,           //       REPORT_COUNT (6)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x75, 0x08,  //160    //       REPORT_SIZE (8)
+    0x09, 0x51,           //       USAGE (Contact Identifier)
+    0x95, 0x01,           //       REPORT_COUNT (1)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
+    0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)
     0x75, 0x10,           //       REPORT_SIZE (16)
     0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
     0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
     0x09, 0x30,           //       USAGE (X)
     0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
-    0x46, 0x40, 0x06,     //       PHYSICAL_MAXIMUM (0x640 = 1600)     //1600 * 10^(-2) = 16 inches X-dimension
+    0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
     0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
-    0x26, 0xB8, 0x0B,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
-    0x46, 0xE8, 0x03,     //       PHYSICAL_MAXIMUM (0x3E8 = 1000)    //1000 * 10^(-2) = 10 inches Y-dimension
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
+    0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
     0x09, 0x31,           //       USAGE (Y)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
+    0xC0,                 //    END_COLLECTION
+    0xA1, 0x02,           //    COLLECTION (Logical)
+    0x05, 0x0D,	 //201    //       USAGE_PAGE (Digitizers)
+    0x09, 0x42,           //       USAGE (Tip Switch)
+    0x15, 0x00,           //       LOGICAL_MINIMUM (0)
+    0x25, 0x01,           //       LOGICAL_MAXIMUM (1)
+    0x75, 0x01,           //       REPORT_SIZE (1)
+    0x95, 0x01,           //       REPORT_COUNT (1)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
+    0x09, 0x32,	          //       USAGE (In Range)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
+    0x95, 0x06,           //       REPORT_COUNT (6)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x75, 0x08,           //       REPORT_SIZE (8)
+    0x09, 0x51,           //       USAGE (Contact Identifier)
+    0x95, 0x01,           //       REPORT_COUNT (1)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
+    0x05, 0x01,  //231    //       USAGE_PAGE (Generic Desk..
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (320)
+    0x75, 0x10,           //       REPORT_SIZE (16)
+    0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
+    0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
+    0x09, 0x30,           //       USAGE (X)
+    0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
+    0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (240)             //16:10 aspect ratio (X:Y)
+    0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
+    0x09, 0x31,           //       USAGE (Y)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
+    0xC0,        //260    //    END_COLLECTION
+    0xA1, 0x02,           //    COLLECTION (Logical)
+    0x05, 0x0D,	          //       USAGE_PAGE (Digitizers)
+    0x09, 0x42,           //       USAGE (Tip Switch)
+    0x15, 0x00,           //       LOGICAL_MINIMUM (0)
+    0x25, 0x01,           //       LOGICAL_MAXIMUM (1)
+    0x75, 0x01,           //       REPORT_SIZE (1)
+    0x95, 0x01,           //       REPORT_COUNT (1)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
+    0x09, 0x32,	          //       USAGE (In Range)
+    0x81, 0x02,  //280    //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
+    0x95, 0x06,           //       REPORT_COUNT (6)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x75, 0x08,           //       REPORT_SIZE (8)
+    0x09, 0x51,           //       USAGE (Contact Identifier)
+    0x95, 0x01,  //290    //       REPORT_COUNT (1)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
+    0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)
+    0x75, 0x10,           //       REPORT_SIZE (16)
+    0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
+    0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
+    0x09, 0x30,           //       USAGE (X)
+    0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
+    0x46, 0x13, 0x01,//310//       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
+    0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
+    0x09, 0x31,  //320    //       USAGE (Y)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
     0xC0,                 //   END_COLLECTION
     0x05, 0x0D,	          //   USAGE_PAGE (Digitizers)
     0x09, 0x54,	          //   USAGE (Actual count)
     0x95, 0x01,           //   REPORT_COUNT (1)
     0x75, 0x08,           //   REPORT_SIZE (8)
-    0x25, 0x02,           //   LOGICAL_MAXIMUM (2)				//Maximum number of valid contact points simutaneously supported.  Increase this number if supporting more than 2 simultaneous contacts.
-    0x81, 0x02,           //   INPUT (Data,Var,Abs)				//Makes one, 8-bit field for the actual number of valid contacts reported (valid values: 1 and 2)
-    0x85, 0x02,           //   REPORT_ID (Feature)   			//When the firmware wants to send a feature report, the Report ID byte should match this number (0x02 in this case).
+    0x25, 0x05,           //   LOGICAL_MAXIMUM (5)          //Maximum number of valid contact points simutaneously supported
+    0x81, 0x02,           //   INPUT (Data,Var,Abs)         //Makes one, 8-bit field for the actual number of valid contacts reported
+    0x85, 0x02,           //   REPORT_ID (Feature)          //When the firmware wants to send a feature report, the Report ID byte should match this number (0x02 in this case).
     0x09, 0x55,           //   USAGE(Maximum Count)
-    0xB1, 0x02,           //   FEATURE (Data,Var,Abs) 			//Makes one, 8-bit field for reporting the maximum number of simultaneous contacts supported by the device.  Since this report descriptor contains two logical collections (one for each contact point), the firmware should always send 0x02 in response to a get feature report request.
-    0xC0                  // END_COLLECTION
+    0xB1, 0x02,           //   FEATURE (Data,Var,Abs)
+    0xC0         //342    // END_COLLECTION
 	}
 };// end of HID report descriptor
 
