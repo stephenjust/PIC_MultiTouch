@@ -266,10 +266,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x75, 0x01,  //20     //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for tip switch
-    0x09, 0x32,	          //       USAGE (In Range)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range indicator
-    0x95, 0x06,  //30     //       REPORT_COUNT (6)
-    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields, which are pad bits (no valid data)
+    0x95, 0x07,  //30     //       REPORT_COUNT (7)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes seven, 1-bit fields, which are pad bits (no valid data)
     0x75, 0x08,           //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,           //       REPORT_COUNT (1)
@@ -296,10 +294,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x75, 0x01,           //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
-    0x09, 0x32,	          //       USAGE (In Range)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
-    0x95, 0x06,           //       REPORT_COUNT (6)
-    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x95, 0x07,           //       REPORT_COUNT (7)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes seven, 1-bit fields that are pad bits (no valid data)
     0x75, 0x08,           //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,           //       REPORT_COUNT (1)
@@ -326,10 +322,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x75, 0x01,           //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,  //150    //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
-    0x09, 0x32,	          //       USAGE (In Range)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
-    0x95, 0x06,           //       REPORT_COUNT (6)
-    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x95, 0x07,           //       REPORT_COUNT (7)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes seven, 1-bit fields that are pad bits (no valid data)
     0x75, 0x08,  //160    //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,           //       REPORT_COUNT (1)
@@ -356,10 +350,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x75, 0x01,           //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
-    0x09, 0x32,	          //       USAGE (In Range)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
-    0x95, 0x06,           //       REPORT_COUNT (6)
-    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x95, 0x07,           //       REPORT_COUNT (7)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes seven, 1-bit fields that are pad bits (no valid data)
     0x75, 0x08,           //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,           //       REPORT_COUNT (1)
@@ -386,10 +378,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x75, 0x01,           //       REPORT_SIZE (1)
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs) 		//Makes one, 1-bit field for Tip Switch
-    0x09, 0x32,	          //       USAGE (In Range)
-    0x81, 0x02,  //280    //       INPUT (Data,Var,Abs)         //Makes one, 1-bit field for In Range Indicator
-    0x95, 0x06,           //       REPORT_COUNT (6)
-    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes six, 1-bit fields that are pad bits (no valid data)
+    0x95, 0x07,           //       REPORT_COUNT (7)
+    0x81, 0x03,           //       INPUT (Cnst,Ary,Abs)			//Makes seven, 1-bit fields that are pad bits (no valid data)
     0x75, 0x08,           //       REPORT_SIZE (8)
     0x09, 0x51,           //       USAGE (Contact Identifier)
     0x95, 0x01,  //290    //       REPORT_COUNT (1)
