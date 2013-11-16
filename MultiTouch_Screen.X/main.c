@@ -803,7 +803,7 @@ void MultiTouchGetReportHandler(void)
  *	//Byte[0] = Report ID == use literal value "0x01" when sending contact reports.
  *
  * 	//First contact point info in bytes 1-6.
- *	//Byte[1] = Bits7-2: pad bits (unused), Bit1:In Range, Bit0:Tip Switch
+ *	//Byte[1] = Bits7-1: pad bits (unused), Bit0:Tip Switch
  *	//Byte[2] = Contact identifier number (assigned by firmware, see report descriptor)
  *	//Byte[3] = X-coordinate LSB
  *	//Byte[4] = X-coordinate MSB
@@ -836,8 +836,8 @@ void touch_send(void) {
     hid_report_in[T_COUNT_INDEX] = t_data.data.TD_STATUS & 0b00000111; // Number of valid contacts
 
     // Touch point 1
-    if (hid_report_in[T_COUNT_INDEX] >= 1)
-        hid_report_in[1] = 3;
+    if (hid_report_in[T_COUNT_INDEX] >= 1 && (t_data.data.TOUCH1_XH >> 6) != 1)
+        hid_report_in[1] = 1;
     else
         hid_report_in[1] = 0;
     //First contact info in bytes 1-6
@@ -848,8 +848,8 @@ void touch_send(void) {
     hid_report_in[6] = t_data.data.TOUCH1_YH & 0x00001111;		//Y-coord MSB
 
     // Touch point 2
-    if (hid_report_in[T_COUNT_INDEX] >= 2)
-        hid_report_in[7] = 3;
+    if (hid_report_in[T_COUNT_INDEX] >= 2 && (t_data.data.TOUCH2_XH >> 6) != 1)
+        hid_report_in[7] = 1;
     else
         hid_report_in[7] = 0;
     hid_report_in[8] = (t_data.data.TOUCH2_YH >> 4) & 0x00001111;//Contact ID
@@ -859,8 +859,8 @@ void touch_send(void) {
     hid_report_in[12] = 0;	//Y-coord MSB
 
     // Touch point 3
-    if (hid_report_in[T_COUNT_INDEX] >= 3)
-        hid_report_in[13] = 3;
+    if (hid_report_in[T_COUNT_INDEX] >= 3 && (t_data.data.TOUCH3_XH >> 6) != 1)
+        hid_report_in[13] = 1;
     else
         hid_report_in[13] = 0;
     hid_report_in[14] = (t_data.data.TOUCH3_YH >> 4) & 0x00001111;//Contact ID
@@ -870,8 +870,8 @@ void touch_send(void) {
     hid_report_in[18] = 0;	//Y-coord MSB
 
     // Touch point 4
-    if (hid_report_in[T_COUNT_INDEX] >= 4)
-        hid_report_in[19] = 3;
+    if (hid_report_in[T_COUNT_INDEX] >= 4 && (t_data.data.TOUCH4_XH >> 6) != 1)
+        hid_report_in[19] = 1;
     else
         hid_report_in[19] = 0;
     hid_report_in[20] = (t_data.data.TOUCH4_YH >> 4) & 0x00001111;//Contact ID
@@ -881,8 +881,8 @@ void touch_send(void) {
     hid_report_in[24] = 0;	//Y-coord MSB
 
     // Touch point 5
-    if (hid_report_in[T_COUNT_INDEX] >= 5)
-        hid_report_in[25] = 3;
+    if (hid_report_in[T_COUNT_INDEX] >= 5 && (t_data.data.TOUCH5_XH >> 6) != 1)
+        hid_report_in[25] = 1;
     else
         hid_report_in[25] = 0;
     hid_report_in[26] = (t_data.data.TOUCH5_YH >> 4) & 0x00001111;//Contact ID

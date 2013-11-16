@@ -166,8 +166,6 @@
         <property key="programoptions.uselvpprogramming" value="false"/>
         <property key="voltagevalue" value="3.25"/>
       </PICkit3PlatformTool>
-      <PK3OBPlatformTool>
-      </PK3OBPlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>
