@@ -856,7 +856,7 @@ void touch_send(void) {
     hid_report_in[9] = t_data.data.TOUCH2_XL;                   //X-coord LSB
     hid_report_in[10] = t_data.data.TOUCH2_XH & 0x00001111;	//X-coord MSB
     hid_report_in[11] = t_data.data.TOUCH2_YL;			//Y-coord LSB
-    hid_report_in[12] = 0;	//Y-coord MSB
+    hid_report_in[12] = t_data.data.TOUCH2_YH & 0x00001111;	//Y-coord MSB
 
     // Touch point 3
     if (hid_report_in[T_COUNT_INDEX] >= 3 && (t_data.data.TOUCH3_XH >> 6) != 1)
@@ -867,7 +867,7 @@ void touch_send(void) {
     hid_report_in[15] = t_data.data.TOUCH3_XL;                   //X-coord LSB
     hid_report_in[16] = t_data.data.TOUCH3_XH & 0x00001111;	//X-coord MSB
     hid_report_in[17] = t_data.data.TOUCH3_YL;			//Y-coord LSB
-    hid_report_in[18] = 0;	//Y-coord MSB
+    hid_report_in[18] = t_data.data.TOUCH3_YH & 0x00001111;	//Y-coord MSB
 
     // Touch point 4
     if (hid_report_in[T_COUNT_INDEX] >= 4 && (t_data.data.TOUCH4_XH >> 6) != 1)
@@ -878,7 +878,7 @@ void touch_send(void) {
     hid_report_in[21] = t_data.data.TOUCH4_XL;                   //X-coord LSB
     hid_report_in[22] = t_data.data.TOUCH4_XH & 0x00001111;	//X-coord MSB
     hid_report_in[23] = t_data.data.TOUCH4_YL;			//Y-coord LSB
-    hid_report_in[24] = 0;	//Y-coord MSB
+    hid_report_in[24] = t_data.data.TOUCH4_YH & 0x00001111;	//Y-coord MSB
 
     // Touch point 5
     if (hid_report_in[T_COUNT_INDEX] >= 5 && (t_data.data.TOUCH5_XH >> 6) != 1)
@@ -889,7 +889,7 @@ void touch_send(void) {
     hid_report_in[27] = t_data.data.TOUCH5_XL;                   //X-coord LSB
     hid_report_in[28] = t_data.data.TOUCH5_XH & 0x00001111;	//X-coord MSB
     hid_report_in[29] = t_data.data.TOUCH5_YL;			//Y-coord LSB
-    hid_report_in[30] = 0;	//Y-coord MSB
+    hid_report_in[30] = t_data.data.TOUCH5_YH & 0x00001111;	//Y-coord MSB
 
     lastTransmission = HIDTxPacket(HID_EP, (BYTE*)hid_report_in, 32);
 }

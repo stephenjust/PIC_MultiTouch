@@ -273,15 +273,15 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,  //40     //       INPUT (Data,Var,Abs) 		//Makes one, 8-bit field for the contact identifier number.  Firmware arbitrarily assigns a contact ID, which stays the same until the contact becomes invalid (finger removed from screen).
     0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
-    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)   	//This is the maximum value the firmware should send for the X coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNITS parameter).
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (320)        // Touch panel width
     0x75, 0x10,           //       REPORT_SIZE (16)
-    0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
-    0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
+    0x55, 0x0E,           //       UNIT_EXPONENT (-2)           //10^(-2)
+    0x65, 0x33,           //       UNIT (Inches, English Linear)
     0x09, 0x30,           //       USAGE (X)
     0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
     0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
     0x81, 0x02,  //60     //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800 (4800 is the LOGICAL_MAXIMUM, which would correspond to far edge of the screen, which is 1600x10mil distance from X origin [left of screen])
-    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y) (ex: 4800/3000 = 16/10).  //This is the maximum value the firmware should send for the Y coordinate contact point.  It can potentially make the firmware design mathematically simpler if this is set to some meaningful value, such as equal to the PHYSICAL_MAXIMUM (which specifies the dimensions of the actual touch screen, in terms of the UNIT parameter).
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (240)        // Touch panel height
     0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
     0x09, 0x31,           //       USAGE (Y)
     0x81, 0x02,  //70     //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for Y coordinate info.  Valid values from: 0-3000 (3000 is the LOGICAL_MAIXMUM, which would correspond to the far bottom of the screen, which is 1000x10mil distance from the Y origin [top of screen])
@@ -301,18 +301,18 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
     0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
-    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (320)        // Screen width
     0x75, 0x10,  //110    //       REPORT_SIZE (16)
-    0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
-    0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
+    0x55, 0x0E,           //       UNIT_EXPONENT (-2)           //10^(-2)
+    0x65, 0x33,           //       UNIT (Inches, English Linear)
     0x09, 0x30,           //       USAGE (X)
     0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
     0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
-    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (240)        // Screen height
     0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
     0x09, 0x31,           //       USAGE (Y)
-    0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
+    0x81, 0x02,           //       INPUT (Data,Var,Abs)         //Makes one, 16-bit field for X coordinate info, valid values: 0-3071
     0xC0,                 //    END_COLLECTION
     0xA1, 0x02,           //    COLLECTION (Logical)
     0x05, 0x0D,	          //       USAGE_PAGE (Digitizers)
@@ -329,7 +329,7 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x95, 0x01,           //       REPORT_COUNT (1)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 8-bit field for the contact identifier number.
     0x05, 0x01,           //       USAGE_PAGE (Generic Desk..
-    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (4800)
+    0x26, 0x40, 0x01,     //       LOGICAL_MAXIMUM (320)        // Screen width
     0x75, 0x10,           //       REPORT_SIZE (16)
     0x55, 0x0E,           //       UNIT_EXPONENT (-2)       //10^(-2)
     0x65, 0x33,           //       UNIT (Inches, English Linear)  //But exponent -2, so Physical Maximum is in 10?s of mils.
@@ -337,7 +337,7 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={{
     0x35, 0x00,           //       PHYSICAL_MINIMUM (0)
     0x46, 0x13, 0x01,     //       PHYSICAL_MAXIMUM (0x113 = 275)     //275 * 10^(-2) = 2.75 inches X-dimension
     0x81, 0x02,           //       INPUT (Data,Var,Abs)           //Makes one, 16-bit field for X coordinate info.  Valid values from: 0-4800
-    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (3000)             //16:10 aspect ratio (X:Y)
+    0x26, 0xF0, 0x00,     //       LOGICAL_MAXIMUM (240)        // Screen height
     0x46, 0xCE, 0x00,     //       PHYSICAL_MAXIMUM (0x0CE = 206)    //206 * 10^(-2) = 2.06 inches Y-dimension
     0x09, 0x31,           //       USAGE (Y)
     0x81, 0x02,           //       INPUT (Data,Var,Abs)			//Makes one, 16-bit field for X coordinate info, valid values: 0-3071
